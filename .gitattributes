@@ -1,0 +1,2 @@
+# Preserve hashes of independently authored benchmark evidence on every platform.
+benchmarks/submissions/** -text

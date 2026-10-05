@@ -37,6 +37,8 @@ into an agent's skills directory after the Python package is installed.
 Default responses allow 2,000 cells, 100 query rows and 12,000 JSON characters.
 Budget overflow is an error, never silent truncation. Prefer aggregates, projections,
 formula patterns and metadata pagination before explicitly raising a budget.
+Wide source headers are resolved locally during query loading: project the required
+columns directly, without reading all headers into the response or raising its budget.
 Pagination and LIMIT return subsets; state that scope when interpreting them.
 
 Keep a Python `Workbook` session open for related operations. The session caches

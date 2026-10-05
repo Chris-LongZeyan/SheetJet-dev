@@ -3,6 +3,42 @@ import pytest
 from sheetjet import SheetJetError, Workbook
 
 
+def test_cache_paths_with_quotes_keep_exact_read_allowlist(model, tmp_path):
+    import duckdb
+
+    cache = tmp_path / "analyst's cache"
+    secret = cache / "other.txt"
+    with Workbook(model, cache) as book:
+        engine = book.query_engine
+        engine.load("Sales", columns=["Revenue"], schema={"Revenue": "BIGINT"})
+        secret.write_text("not a projection")
+        assert engine.query("SELECT sum(Revenue) FROM Sales")["rows"] == [[51500]]
+        with pytest.raises(duckdb.Error, match="disabled"):
+            engine.query("SELECT * FROM read_text(?)", [str(secret)])
+        assert engine.query("SELECT current_setting('lock_configuration')")["rows"] == [[True]]
+
+
+def test_scalar_query_does_not_import_optional_dataframe_stack(model, cache):
+    import subprocess
+    import sys
+
+    script = """
+import sys
+from sheetjet import Workbook
+with Workbook(sys.argv[1], sys.argv[2]) as book:
+    engine = book.query_engine
+    engine.load('Sales', columns=['Revenue'], schema={'Revenue': 'BIGINT'})
+    assert engine.query('SELECT sum(Revenue) FROM Sales')['rows'] == [[51500]]
+    engine.materialize('Sales')
+    assert engine.query('SELECT count(*) FROM Sales')['rows'] == [[100]]
+    assert 'pandas' not in sys.modules
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script, str(model), str(cache)], capture_output=True, text=True
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_lazy_cache_views_and_query_session_restrictions(model, cache, tmp_path):
     import duckdb
 

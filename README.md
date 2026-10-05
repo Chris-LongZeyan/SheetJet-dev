@@ -16,12 +16,17 @@ library. No LLM API key, embeddings service, or Excel installation is required.
 1 assumption edit     → XML patch → untouched workbook parts preserved
 ```
 
-**New in v0.3:** stream scalar values without building XML trees, query cached
-Parquet directly, and retain a restricted SQL connection for related queries.
-For repeated scans, `query_engine.materialize("Sales")` explicitly trades one
-session-local copy for lower query latency. See the [v0.3 measurements](docs/performance-v0.3.md).
-Untouched ZIP records remain byte-preserved, and typed projections remain reusable
-across sessions and edits to other sheets.
+**New in v0.4:** project from 2,500-column sheets without exposing their headers or
+raising the response budget, and avoid optional dataframe imports for queries
+without user parameters. Includes independent same-model trials using the official
+Anthropic XLSX and installed OpenAI Spreadsheets skills: **72 successful executions
+across two rounds**, with frozen builders, independent saved-file checks, and raw results.
+
+In the final round, SheetJet's single-cell edit was **3.53× faster than the Anthropic
+submission and 7.41× faster than the OpenAI submission**. Selected multi-sheet
+aggregation plus writeback was **1.53× and 2.70× faster**. These are three-trial
+medians for specific generated workflows; Anthropic won the small wide-sheet task
+and used less query memory. [Full skill comparison and reproduction](docs/skill-workflows-v0.4.md).
 
 In the current four-sheet, 100k-row comparison, changing one assumption took a median
 **0.105 s and 38.5 MiB peak RSS**, versus **7.247 s and 258.8 MiB** for openpyxl's
@@ -54,6 +59,8 @@ See [current peer measurements](docs/performance-v0.3.md), the
 [original v0.1 measurements](docs/benchmarks.md).
 Ordinary deterministic analysis also avoids an LLM context dump; SheetJet packages
 that approach with enforceable budgets, discovery tools and audited edits.
+The [skill workflow benchmark](docs/skill-workflows-v0.4.md) additionally evaluates
+independent agent-authored solutions, including preservation-aware peer fallbacks.
 
 ## Try it in a minute
 

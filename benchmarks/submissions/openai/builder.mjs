@@ -1,0 +1,64 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { Workbook, SpreadsheetFile } from '@oai/artifact-tool';
+
+const here=path.dirname(fileURLToPath(import.meta.url));
+const python='C:/Users/Chris_longzeyan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe';
+const [task,input,output,resultPath]=process.argv.slice(2);
+if (!['edit','aggregate','wide','create'].includes(task)||!path.isAbsolute(output)||!path.isAbsolute(resultPath)) throw Error('Usage: builder.mjs task absolute-input absolute-output absolute-result');
+await fs.mkdir(path.dirname(output),{recursive:true});
+await fs.mkdir(path.dirname(resultPath),{recursive:true});
+// Keep any runtime temporary artifacts local to this invocation's fresh output.
+const runTemp=path.join(path.dirname(output),'.tmp');
+await fs.mkdir(runTemp,{recursive:true});
+process.env.TEMP=runTemp;
+process.env.TMP=runTemp;
+const wb=Workbook.create();
+let result;
+if (task==='create') {
+  const s=wb.worksheets.add('Budget');
+  s.getRange('A1:D4').values=[['Month','Revenue','Cost','Profit'],['Jan',100,60,null],['Feb',120,70,null],['Mar',90,50,null]];
+  s.getRange('D2:D4').formulas=[['=B2-C2'],['=B3-C3'],['=B4-C4']];
+  s.getRange('A5').values=[['Total']];
+  s.getRange('B5:D5').formulas=[['=SUM(B2:B4)','=SUM(C2:C4)','=SUM(D2:D4)']];
+  s.getRange('A1:D5').format.font={name:'Arial',size:11};
+  s.getRange('A1:D1').format.font.bold=true;
+  s.getRange('A1:D1').format.fill='#E7EEF5';
+  s.getRange('A5:D5').format.font.bold=true;
+  s.getRange('B2:D5').setNumberFormat('0.00');
+  s.getRange('B2:C4').format.font.color='#0000FF';
+  s.getRange('A1:D5').format.columnWidth=15;
+  s.getRange('A1:D5').format.rowHeight=22;
+  s.freezePanes.freezeRows(1);
+  s.showGridLines=false;
+  const chart=s.charts.add('bar',s.getRange('A1:C4'));
+  chart.title='Monthly Revenue and Cost';
+  chart.setPosition('F2','N16');
+  chart.titleTextStyle.typeface='Arial';
+  chart.titleTextStyle.fontSize=14;
+  chart.legend={position:'bottom',textStyle:{typeface:'Arial',fontSize:11}};
+  chart.xAxis={axisType:'textAxis',textStyle:{typeface:'Arial',fontSize:11}};
+  chart.yAxis={numberFormatCode:'0',numberFormatSourceLinked:false,textStyle:{typeface:'Arial',fontSize:11}};
+  chart.series.items[0].fill='#315C85';
+  chart.series.items[1].fill='#91ACC4';
+  wb.recalculate();
+  const errors=await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!',options:{useRegex:true,maxResults:10},maxChars:1500});
+  if (s.getRange('D2:D5').values.flat().join(',')!=='40,50,40,130') throw Error('Profit check failed');
+  await (await SpreadsheetFile.exportXlsx(wb)).save(output);
+  result={description:'One Budget worksheet with Jan–Mar Revenue, Cost and Profit; SUM totals; native monthly Revenue and Cost column chart; bold header; two-decimal numeric formats; frozen header row; readable widths.',formulas:6,chart_source:'Budget!A1:C4'};
+} else {
+  const plan=JSON.parse(execFileSync(python,[path.join(here,'package_adapter.py'),'read',task,input],{encoding:'utf8',maxBuffer:65536}));
+  const s=wb.worksheets.add(plan.sheet);
+  for (const [cell,value] of Object.entries(plan.updates)) s.getRange(cell).values=[[value]];
+  const authored=path.join(path.dirname(output),'.authored-cells.xlsx');
+  await (await SpreadsheetFile.exportXlsx(wb)).save(authored);
+  execFileSync(python,[path.join(here,'package_adapter.py'),'patch',input,authored,output,JSON.stringify(plan)],{encoding:'utf8',maxBuffer:65536});
+  await fs.unlink(authored);
+  result=plan.result;
+}
+const json=JSON.stringify(result);
+if(Buffer.byteLength(json)>6000) throw Error('Result exceeds requested maximum');
+await fs.writeFile(resultPath,json+'\n');
+console.log(json);

@@ -10,12 +10,16 @@ import re
 import tempfile
 from pathlib import Path
 
-from .core import Budget, address, bounds
+from .core import Budget, address, bounds, position
 from .errors import BudgetExceeded, SheetJetError
 
 
 def identifier(value):
     return '"' + value.replace('"', '""') + '"'
+
+
+def _literal(value):
+    return "'" + str(value).replace("'", "''") + "'"
 
 
 class QueryEngine:
@@ -26,10 +30,14 @@ class QueryEngine:
         self.temp = tempfile.TemporaryDirectory(prefix="sheetjet-query-")
         self.path = str(Path(self.temp.name) / "query.duckdb")
         self.memory_limit = memory_limit
-        self.db = duckdb.connect(self.path)
-        self.db.execute("SET memory_limit = ?", [memory_limit])
-        self.db.execute("SET threads = 4")
-        self.db.execute("SET preserve_insertion_order = false")
+        # Parameter conversion can eagerly import optional pandas. Connection
+        # settings need no value conversion, so keep this path dependency-light.
+        self.config = {
+            "memory_limit": memory_limit,
+            "threads": 4,
+            "preserve_insertion_order": False,
+        }
+        self.db = duckdb.connect(self.path, config=self.config)
         self.loaded = {}
         self.unions = {}
         self.sources = {}
@@ -41,10 +49,7 @@ class QueryEngine:
             import duckdb
 
             self.db.close()
-            self.db = duckdb.connect(self.path)
-            self.db.execute("SET memory_limit = ?", [self.memory_limit])
-            self.db.execute("SET threads = 4")
-            self.db.execute("SET preserve_insertion_order = false")
+            self.db = duckdb.connect(self.path, config=self.config)
             self.readonly = False
 
     @staticmethod
@@ -55,7 +60,7 @@ class QueryEngine:
     def _publish(self, name, path):
         """Publish a projection without copying its data into the session database."""
         path = path.resolve()
-        literal = "'" + str(path).replace("'", "''") + "'"
+        literal = _literal(path)
         stamp = self._stamp(path)
         self._replace_view(name, f"SELECT * FROM read_parquet({literal})")
         self.sources[name.casefold()] = (path, stamp)
@@ -102,9 +107,15 @@ class QueryEngine:
         r1, c1, r2, c2 = bounds(ref)
         if table:
             r2 -= table["total_rows"]
-        headers = self.w.read_range(sheet, f"{self.w.address(r1, c1)}:{self.w.address(r1, c2)}")[
-            "rows"
-        ][0]
+        # Headers are internal planning data, not a response to the model. A wide
+        # source can project two columns without exposing thousands of headings.
+        headers = [None] * (c2 - c1 + 1)
+        header_ref = f"{address(r1, c1)}:{address(r1, c2)}"
+        for rn, cells in self.w.package.rows(sheet, header_ref):
+            if rn == r1:
+                for cell in cells:
+                    headers[position(cell["cell"])[1] - c1] = cell["value"]
+                break
         if any(not isinstance(x, str) or not x.strip() for x in headers) or len(
             {x.casefold() for x in headers}
         ) != len(headers):
@@ -220,8 +231,8 @@ class QueryEngine:
                 p.check()
                 with self.w.metrics.time("projection_write"):
                     self.db.execute(
-                        f"COPY {identifier(stage_view)} TO ? (FORMAT PARQUET, COMPRESSION ZSTD)",
-                        [str(pending)],
+                        f"COPY {identifier(stage_view)} TO {_literal(pending)} "
+                        "(FORMAT PARQUET, COMPRESSION ZSTD)"
                     )
                     p.check()
                     os.replace(pending, cached)
@@ -344,11 +355,10 @@ class QueryEngine:
                 self.db = duckdb.connect(
                     self.path,
                     read_only=True,
-                    config={"memory_limit": self.memory_limit, "threads": 4},
+                    config=self.config,
                 )
-                self.db.execute(
-                    "SET allowed_paths = ?", [[str(path) for path, _ in self.sources.values()]]
-                )
+                paths = ",".join(_literal(path) for path, _ in self.sources.values())
+                self.db.execute(f"SET allowed_paths = [{paths}]")
                 self.db.execute("SET enable_external_access = false")
                 self.db.execute("SET lock_configuration = true")
                 self.readonly = True
