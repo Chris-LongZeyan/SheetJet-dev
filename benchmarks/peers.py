@@ -10,6 +10,7 @@ import argparse
 import gc
 import hashlib
 import importlib.metadata
+import importlib.util
 import json
 import platform
 import random
@@ -32,6 +33,10 @@ METHODS = [
     "calamine",
     "sheetjet_cached",
     "polars_parquet",
+    "sheetjet_session",
+    "polars_session",
+    "sheetjet_materialized",
+    "polars_materialized",
     "sheetjet_patch",
     "openpyxl_patch",
 ]
@@ -125,6 +130,7 @@ def worker(method, path, rows, sheets):
     schema = {"Region": "VARCHAR", "Revenue": "BIGINT"}
     metrics = {}
     setup = 0.0
+    latencies, repeated_answers = [], []
     try:
         with tempfile.TemporaryDirectory(prefix="sheetjet-peer-") as tmp:
             tmp = Path(tmp)
@@ -137,7 +143,7 @@ def worker(method, path, rows, sheets):
                 setup = time.perf_counter() - start
                 gc.collect()
                 start = time.perf_counter()
-            elif method == "polars_parquet":
+            elif method in {"polars_parquet", "polars_session", "polars_materialized"}:
                 import polars as pl
 
                 frames = pl.read_excel(
@@ -152,12 +158,32 @@ def worker(method, path, rows, sheets):
                 setup = time.perf_counter() - start
                 gc.collect()
                 start = time.perf_counter()
-            if method in {"sheetjet", "sheetjet_cached"}:
+            if method in {
+                "sheetjet",
+                "sheetjet_cached",
+                "sheetjet_session",
+                "sheetjet_materialized",
+            }:
                 from sheetjet import Workbook
 
                 with Workbook(path, tmp / "cache") as w:
                     w.query_engine.load_sheets("Sales", ranges, schema)
-                    answer = w.query_engine.query(_sql())["rows"]
+                    if method == "sheetjet_materialized":
+                        w.query_engine.materialize("Sales")
+                    if method in {"sheetjet_session", "sheetjet_materialized"}:
+                        w.query_engine.query(
+                            _sql()
+                        )  # Establish a warm query session for both peers.
+                        setup = time.perf_counter() - start
+                        gc.collect()
+                        start = time.perf_counter()
+                    for _ in range(
+                        20 if method in {"sheetjet_session", "sheetjet_materialized"} else 1
+                    ):
+                        query_start = time.perf_counter()
+                        answer = w.query_engine.query(_sql())["rows"]
+                        latencies.append(time.perf_counter() - query_start)
+                        repeated_answers.append(answer)
                     metrics = w.metrics.snapshot()
             elif method.startswith("pandas_"):
                 import pandas as pd
@@ -175,17 +201,31 @@ def worker(method, path, rows, sheets):
                     for region, value in frame.groupby("Region")["Revenue"].sum().items():
                         totals[region] += int(value)
                 answer = [[k, v] for k, v in sorted(totals.items())]
-            elif method in {"polars_calamine", "polars_parquet"}:
+            elif method in {
+                "polars_calamine",
+                "polars_parquet",
+                "polars_session",
+                "polars_materialized",
+            }:
                 import polars as pl
 
-                if method == "polars_parquet":
-                    data = (
-                        pl.scan_parquet(str(tmp / "*.parquet"))
-                        .group_by("Region")
-                        .agg(pl.col("Revenue").sum())
-                        .sort("Region")
-                        .collect()
-                    )
+                if method in {"polars_parquet", "polars_session", "polars_materialized"}:
+                    source = pl.scan_parquet(str(tmp / "*.parquet"))
+                    if method == "polars_materialized":
+                        source = source.collect().lazy()
+                    lazy = source.group_by("Region").agg(pl.col("Revenue").sum()).sort("Region")
+                    if method in {"polars_session", "polars_materialized"}:
+                        lazy.collect()
+                        setup += time.perf_counter() - start
+                        gc.collect()
+                        start = time.perf_counter()
+                    for _ in range(
+                        20 if method in {"polars_session", "polars_materialized"} else 1
+                    ):
+                        query_start = time.perf_counter()
+                        data = lazy.collect()
+                        latencies.append(time.perf_counter() - query_start)
+                        repeated_answers.append([list(row) for row in data.rows()])
                 else:
                     frames = pl.read_excel(
                         path,
@@ -270,6 +310,7 @@ def worker(method, path, rows, sheets):
                 for i in range(1, rows + 1):
                     totals[["APAC", "EMEA", "Americas", "Other"][i % 4]] += (i % 1000 + 1) * sheets
                 assert answer == [[k, v] for k, v in sorted(totals.items())], answer
+                assert all(result == answer for result in repeated_answers)
     finally:
         stop.set()
         thread.join()
@@ -281,6 +322,8 @@ def worker(method, path, rows, sheets):
         "answer": answer,
         "verified": True,
         "metrics": metrics,
+        "query_repetitions": len(latencies),
+        "query_latencies_seconds": latencies,
     }
 
 
@@ -342,6 +385,10 @@ def main():
     }
     with path.open("rb") as stream:
         digest = hashlib.file_digest(stream, "sha256").hexdigest()
+    package_root = Path(importlib.util.find_spec("sheetjet").submodule_search_locations[0])
+    source_hash = hashlib.sha256()
+    for source in sorted(package_root.glob("*.py")):
+        source_hash.update(source.name.encode() + b"\0" + source.read_bytes())
     result = {
         "rows_per_sheet": args.rows,
         "selected_sheets": args.sheets,
@@ -350,6 +397,9 @@ def main():
         "repeats": args.repeats,
         "file_bytes": path.stat().st_size,
         "file_sha256": digest,
+        "sheetjet_source_sha256": source_hash.hexdigest(),
+        "benchmark_source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "session_methodology": "Methods ending in _session or _materialized perform 20 identical aggregations after one untimed warm-up; seconds is the whole 20-query phase, not one query. Individual latencies are retained. Materialized routes copy rows into a session DuckDB table or Polars DataFrame before timing. Preparation, including that copy, is reported separately. Every repeated answer is checked; no answer cache is used.",
         "environment": {
             "python": platform.python_version(),
             "platform": platform.platform(),

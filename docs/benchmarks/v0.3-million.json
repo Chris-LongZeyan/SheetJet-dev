@@ -1,0 +1,1324 @@
+{
+  "rows_per_sheet": 250000,
+  "selected_sheets": 4,
+  "total_rows": 1000000,
+  "shared_strings": true,
+  "repeats": 3,
+  "file_bytes": 24691884,
+  "file_sha256": "61a7871c2d02ffa1d9c1dc42e79325b57ae7ac8b7faa8c7dcab4da064caa53ca",
+  "sheetjet_source_sha256": "e897a97de1459fa7afd18d7fbe4009615ce0e696e7820288715b268b8f380b4b",
+  "benchmark_source_sha256": "f540f1917143637b901c365275ee2d4447b2c910a9c37d9c01e25bc839e87dc1",
+  "session_methodology": "Methods ending in _session or _materialized perform 20 identical aggregations after one untimed warm-up; seconds is the whole 20-query phase, not one query. Individual latencies are retained. Materialized routes copy rows into a session DuckDB table or Polars DataFrame before timing. Preparation, including that copy, is reported separately. Every repeated answer is checked; no answer cache is used.",
+  "environment": {
+    "python": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+    "versions": {
+      "duckdb": "1.5.5",
+      "lxml": "6.1.1",
+      "openpyxl": "3.1.5",
+      "polars": "1.44.2",
+      "fastexcel": "0.21.0",
+      "pandas": "2.3.1",
+      "python-calamine": "0.8.2"
+    }
+  },
+  "methodology": "Fresh process per trial, fixed randomized order; OS cache not flushed. Cold time includes method imports, load, projection, aggregation, close; excludes fixture creation, temporary-directory cleanup and independent validation. Cached rows exclude preparation/imports and measure a new SheetJet workbook session or Polars Parquet query; setup time is reported separately. RSS sampled every 10ms includes setup/validation and can miss spikes. All methods use the same selected sheets and aggregate inputs; returned answers match independent arithmetic. Cache comparison includes a peer Parquet workflow. Patch tasks edit the small Assumptions sheet, not a large sheet. No native Excel verification. No claim of universal superiority.",
+  "medians": [
+    {
+      "method": "sheetjet",
+      "seconds": 12.563499100040644,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 121.5625
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 1.902235300047323,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 177.828125
+    },
+    {
+      "method": "calamine",
+      "seconds": 2.614203999983147,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 163.38671875
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.12392180017195642,
+      "setup_seconds": 12.571883999975398,
+      "peak_rss_mb": 119.84765625
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.0098172000143677,
+      "setup_seconds": 2.1230961999390274,
+      "peak_rss_mb": 169.95703125
+    },
+    {
+      "method": "sheetjet_session",
+      "seconds": 0.22586060012690723,
+      "setup_seconds": 12.085825899848714,
+      "peak_rss_mb": 121.54296875
+    },
+    {
+      "method": "polars_session",
+      "seconds": 0.09561439999379218,
+      "setup_seconds": 1.9495148998685181,
+      "peak_rss_mb": 196.48828125
+    },
+    {
+      "method": "sheetjet_materialized",
+      "seconds": 0.07432910008355975,
+      "setup_seconds": 13.009010399924591,
+      "peak_rss_mb": 145.35546875
+    },
+    {
+      "method": "polars_materialized",
+      "seconds": 0.06190149998292327,
+      "setup_seconds": 2.141607099911198,
+      "peak_rss_mb": 177.80859375
+    }
+  ],
+  "trials": [
+    {
+      "method": "sheetjet_session",
+      "seconds": 0.22240129997953773,
+      "setup_seconds": 12.085825899848714,
+      "peak_rss_mb": 121.54296875,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.017512,
+          "range_read": 0.111095,
+          "projection_write": 0.180218,
+          "table_staging": 11.30166,
+          "query": 0.218963
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.017760999966412783,
+        0.010607799980789423,
+        0.01031169993802905,
+        0.01062739989720285,
+        0.010873700026422739,
+        0.010223699966445565,
+        0.01111049996688962,
+        0.01013310020789504,
+        0.010596899781376123,
+        0.011135299922898412,
+        0.01046859985217452,
+        0.011059599928557873,
+        0.010986499954015017,
+        0.010683800093829632,
+        0.0109805001411587,
+        0.011036499869078398,
+        0.009728800039738417,
+        0.010258099995553493,
+        0.010926499962806702,
+        0.010420099832117558
+      ]
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.008851399878039956,
+      "setup_seconds": 2.0547126999590546,
+      "peak_rss_mb": 169.95703125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.008363599888980389
+      ]
+    },
+    {
+      "method": "sheetjet_session",
+      "seconds": 0.2390091000124812,
+      "setup_seconds": 11.584010899998248,
+      "peak_rss_mb": 121.47265625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.007937,
+          "range_read": 0.035992,
+          "projection_write": 0.183165,
+          "table_staging": 10.91784,
+          "query": 0.237588
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.023849999997764826,
+        0.013736899942159653,
+        0.011977900052443147,
+        0.010446699801832438,
+        0.015191599959507585,
+        0.010410499991849065,
+        0.009685099823400378,
+        0.011102000018581748,
+        0.010089500108733773,
+        0.010311000049114227,
+        0.011258200043812394,
+        0.009715000167489052,
+        0.01104829995892942,
+        0.01119660004042089,
+        0.010997500037774444,
+        0.0106734000146389,
+        0.010818899841979146,
+        0.010556100169196725,
+        0.012172499904409051,
+        0.01093430002219975
+      ]
+    },
+    {
+      "method": "sheetjet_session",
+      "seconds": 0.22586060012690723,
+      "setup_seconds": 12.590059999842197,
+      "peak_rss_mb": 122.01953125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.011202,
+          "range_read": 0.031336,
+          "projection_write": 0.170617,
+          "table_staging": 11.898428,
+          "query": 0.219061
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.015087200095877051,
+        0.010434100171551108,
+        0.010460699908435345,
+        0.01043469994328916,
+        0.0104632000438869,
+        0.010404499946162105,
+        0.011315400013700128,
+        0.011463900096714497,
+        0.011284400010481477,
+        0.011283400002866983,
+        0.010841100011020899,
+        0.01170759997330606,
+        0.010958099970594049,
+        0.011328799882903695,
+        0.01160249998793006,
+        0.0106736000161618,
+        0.010361700085923076,
+        0.011039600009098649,
+        0.011223300127312541,
+        0.010860000038519502
+      ]
+    },
+    {
+      "method": "calamine",
+      "seconds": 2.810659500071779,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 163.38671875,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 1.902235300047323,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 177.828125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 12.778176000108942,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 121.5625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.01651,
+          "range_read": 0.040751,
+          "projection_write": 0.188444,
+          "table_staging": 11.892618,
+          "query": 0.017732
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.041667599929496646
+      ]
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 1.9733708000276238,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 170.8515625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "polars_session",
+      "seconds": 0.09660609997808933,
+      "setup_seconds": 1.9495148998685181,
+      "peak_rss_mb": 202.953125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.006305099930614233,
+        0.005182799883186817,
+        0.004969500005245209,
+        0.0046385000459849834,
+        0.004968499997630715,
+        0.004250100115314126,
+        0.004930200055241585,
+        0.005830700043588877,
+        0.005654699867591262,
+        0.005063800141215324,
+        0.005134799983352423,
+        0.004564099945127964,
+        0.0052652000449597836,
+        0.004630299983546138,
+        0.00459129991941154,
+        0.004386200103908777,
+        0.0043895000126212835,
+        0.004223699914291501,
+        0.003854400012642145,
+        0.0034902000334113836
+      ]
+    },
+    {
+      "method": "polars_session",
+      "seconds": 0.09561439999379218,
+      "setup_seconds": 1.9347472998779267,
+      "peak_rss_mb": 188.08984375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.0058293999172747135,
+        0.0051552001386880875,
+        0.005511400057002902,
+        0.004692000104114413,
+        0.004461999982595444,
+        0.004957400029525161,
+        0.003987199859693646,
+        0.005623799981549382,
+        0.004612499848008156,
+        0.005040700081735849,
+        0.004875699989497662,
+        0.004650899907574058,
+        0.004457599949091673,
+        0.004151799948886037,
+        0.004712399793788791,
+        0.004122300073504448,
+        0.004736199975013733,
+        0.004521599970757961,
+        0.004301900044083595,
+        0.004909999901428819
+      ]
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 1.8905601999722421,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 178.02734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "sheetjet_materialized",
+      "seconds": 0.08695290004834533,
+      "setup_seconds": 15.539810199989006,
+      "peak_rss_mb": 144.203125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.010378,
+          "range_read": 0.054239,
+          "projection_write": 0.226232,
+          "table_staging": 14.338188,
+          "materialization": 0.290501,
+          "query": 0.06832
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.006059699924662709,
+        0.006069700000807643,
+        0.005921600153669715,
+        0.005162399960681796,
+        0.0051449998281896114,
+        0.005109300138428807,
+        0.0046732001937925816,
+        0.005630499916151166,
+        0.00440510013140738,
+        0.004298300016671419,
+        0.003365499898791313,
+        0.003436800092458725,
+        0.0029848001431673765,
+        0.0031847998034209013,
+        0.0028218000661581755,
+        0.00267730001360178,
+        0.0029313000850379467,
+        0.003240100108087063,
+        0.0029116999357938766,
+        0.003902300028130412
+      ]
+    },
+    {
+      "method": "calamine",
+      "seconds": 2.614203999983147,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 163.15625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.0098172000143677,
+      "setup_seconds": 2.195554600097239,
+      "peak_rss_mb": 169.69921875,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.009474399965256453
+      ]
+    },
+    {
+      "method": "polars_materialized",
+      "seconds": 0.05959729989990592,
+      "setup_seconds": 2.0484068002551794,
+      "peak_rss_mb": 170.1015625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.003366699907928705,
+        0.0032379000913351774,
+        0.003405699972063303,
+        0.0032444000244140625,
+        0.002745700068771839,
+        0.0030333998147398233,
+        0.00288009992800653,
+        0.0027854000218212605,
+        0.0032804999500513077,
+        0.0031085999216884375,
+        0.0028762000147253275,
+        0.002840300090610981,
+        0.002652399940416217,
+        0.0027566999197006226,
+        0.002769600134342909,
+        0.002691500121727586,
+        0.0029697001446038485,
+        0.0027626999653875828,
+        0.002863900037482381,
+        0.003008600091561675
+      ]
+    },
+    {
+      "method": "polars_session",
+      "seconds": 0.09197789989411831,
+      "setup_seconds": 2.0597131999675184,
+      "peak_rss_mb": 196.48828125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.006437799893319607,
+        0.004478299990296364,
+        0.004246999975293875,
+        0.004087100038304925,
+        0.004554299870505929,
+        0.005173199810087681,
+        0.004830100107938051,
+        0.004950299859046936,
+        0.0040750999469310045,
+        0.004508399870246649,
+        0.004384099971503019,
+        0.004483300028368831,
+        0.00419300002977252,
+        0.004540000110864639,
+        0.0041479000356048346,
+        0.0048316000029444695,
+        0.004448899999260902,
+        0.0040055999998003244,
+        0.0046282000839710236,
+        0.004681999795138836
+      ]
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.13091720012016594,
+      "setup_seconds": 13.934051199816167,
+      "peak_rss_mb": 119.84765625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.00846,
+          "range_read": 0.011189,
+          "persistent_table_read": 0.023468,
+          "query": 0.019007
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.05392149998806417
+      ]
+    },
+    {
+      "method": "calamine",
+      "seconds": 2.5256771000567824,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 163.53515625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 0,
+      "query_latencies_seconds": []
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 12.37160660000518,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 121.8125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.008267,
+          "range_read": 0.045139,
+          "projection_write": 0.167159,
+          "table_staging": 11.584709,
+          "query": 0.012316
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.03667429997585714
+      ]
+    },
+    {
+      "method": "sheetjet_materialized",
+      "seconds": 0.06822949997149408,
+      "setup_seconds": 13.009010399924591,
+      "peak_rss_mb": 145.35546875,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.011635,
+          "range_read": 0.043289,
+          "projection_write": 0.209554,
+          "table_staging": 11.886333,
+          "materialization": 0.214044,
+          "query": 0.051957
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.005671999882906675,
+        0.0036426999140530825,
+        0.003267299849539995,
+        0.0041414001025259495,
+        0.003418200183659792,
+        0.0033979001455008984,
+        0.004919900093227625,
+        0.0027558000292629004,
+        0.0031926000956445932,
+        0.002613699994981289,
+        0.0024667000398039818,
+        0.002843900118023157,
+        0.002745100064203143,
+        0.0027528998907655478,
+        0.0028035000432282686,
+        0.0025692000053822994,
+        0.002511699916794896,
+        0.0031302999705076218,
+        0.003010599873960018,
+        0.003268799977377057
+      ]
+    },
+    {
+      "method": "sheetjet_materialized",
+      "seconds": 0.07432910008355975,
+      "setup_seconds": 11.365665799938142,
+      "peak_rss_mb": 146.2578125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.012547,
+          "range_read": 0.052036,
+          "projection_write": 0.164901,
+          "table_staging": 10.295659,
+          "materialization": 0.245368,
+          "query": 0.058229
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 3286,
+          "estimated_tokens_exposed": 835,
+          "result_cells": 188,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.005225700093433261,
+        0.004215899854898453,
+        0.004353000083938241,
+        0.004790800157934427,
+        0.004796299850568175,
+        0.0031163999810814857,
+        0.0034373002126812935,
+        0.0029511000029742718,
+        0.0029603999573737383,
+        0.0034771000500768423,
+        0.002912500174716115,
+        0.003130699973553419,
+        0.0034324999433010817,
+        0.003356499830260873,
+        0.003128899959847331,
+        0.0031938001047819853,
+        0.003315499983727932,
+        0.0031888000667095184,
+        0.0028562999796122313,
+        0.0034850998781621456
+      ]
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.12392180017195642,
+      "setup_seconds": 12.571883999975398,
+      "peak_rss_mb": 116.640625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.016902,
+          "range_read": 0.01038,
+          "persistent_table_read": 0.018004,
+          "query": 0.010898
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.03277479996904731
+      ]
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.011206999886780977,
+      "setup_seconds": 2.1230961999390274,
+      "peak_rss_mb": 170.05859375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.01087510003708303
+      ]
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.11237720004282892,
+      "setup_seconds": 12.260377100203186,
+      "peak_rss_mb": 121.7734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.01491,
+          "range_read": 0.007363,
+          "persistent_table_read": 0.016075,
+          "query": 0.015197
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.047484299866482615
+      ]
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 12.563499100040644,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 121.4921875,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.018827,
+          "range_read": 0.041109,
+          "projection_write": 0.182719,
+          "table_staging": 11.849966,
+          "query": 0.012
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.03742940002121031
+      ]
+    },
+    {
+      "method": "polars_materialized",
+      "seconds": 0.06190149998292327,
+      "setup_seconds": 2.2720079000573605,
+      "peak_rss_mb": 177.80859375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.004106000065803528,
+        0.0035810000263154507,
+        0.0031338001135736704,
+        0.003374500200152397,
+        0.003562700003385544,
+        0.003464299952611327,
+        0.00353639991953969,
+        0.003359900088980794,
+        0.002811900107190013,
+        0.0029166999738663435,
+        0.002534399973228574,
+        0.0024158998858183622,
+        0.0031169001013040543,
+        0.0026633001398295164,
+        0.0027830000035464764,
+        0.0029223000165075064,
+        0.002934900112450123,
+        0.002659599995240569,
+        0.0026364000514149666,
+        0.0031246000435203314
+      ]
+    },
+    {
+      "method": "polars_materialized",
+      "seconds": 0.07137270015664399,
+      "setup_seconds": 2.141607099911198,
+      "peak_rss_mb": 178.59765625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {},
+      "query_repetitions": 20,
+      "query_latencies_seconds": [
+        0.00412779999896884,
+        0.004019899992272258,
+        0.0038557001389563084,
+        0.004012700170278549,
+        0.0033015001099556684,
+        0.004092700080946088,
+        0.00362550001591444,
+        0.0033220001496374607,
+        0.0037670000456273556,
+        0.003103499999269843,
+        0.0032202000729739666,
+        0.0030525000765919685,
+        0.003402499947696924,
+        0.003558100201189518,
+        0.0032416998874396086,
+        0.0032218999695032835,
+        0.003514799987897277,
+        0.004117300035431981,
+        0.003398000029847026,
+        0.003164099995046854
+      ]
+    }
+  ]
+}

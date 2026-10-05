@@ -62,9 +62,21 @@ selected columns; numerical XML values reach DuckDB without a Python float round
 trip, preserving the source's precision for DECIMAL schemas. Subsequent sessions
 reuse Parquet rather than scanning unchanged data. Cache keys include formula policy,
 so accepting cached formulas in one request cannot bypass the default refusal later.
-`persistent_cache=False` disables Parquet use and creation for a load. Choose a
+`persistent_cache=False` disables persistent Parquet reuse and creation for a load;
+temporary projection files are deleted when the session closes. Choose a
 temporary cache directory if data must not persist. Cache files have no automatic
 retention policy; remove obsolete files when no session uses them.
+
+Cache loads use lazy Parquet views. For many queries that repeatedly scan the same
+relation, call `book.query_engine.materialize("Sales")` once. It creates a typed
+table in the temporary session database and works on multi-sheet unions too.
+The up-front copy can cost more than a single query saves; keep lazy loading for
+one-off analyses. Related queries reuse a restricted read-only connection until
+another load or materialization changes the session.
+
+Invalid cache footers detected on load rebuild automatically. If a lazy scan fails
+on a damaged data page, remove the affected projection when no session uses it and
+reopen the workbook. Do not report an incomplete query as a successful result.
 
 CLI: `sheetjet query-sheets book.xlsx "SELECT _sheet, count(*) FROM Sales GROUP BY 1" --ranges ranges.json --schema columns.json`.
 `ranges.json` maps sheet names to ranges, and `columns.json` maps column names to SQL

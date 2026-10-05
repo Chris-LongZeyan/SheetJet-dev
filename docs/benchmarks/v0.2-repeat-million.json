@@ -1,0 +1,325 @@
+{
+  "rows_per_sheet": 250000,
+  "selected_sheets": 4,
+  "total_rows": 1000000,
+  "shared_strings": true,
+  "repeats": 3,
+  "file_bytes": 24691884,
+  "file_sha256": "61a7871c2d02ffa1d9c1dc42e79325b57ae7ac8b7faa8c7dcab4da064caa53ca",
+  "sheetjet_source_sha256": "7371f950f3a5dfc12f6ce5d2bd90402d88c838a3c03d32a7256f2b4d094859b0",
+  "benchmark_source_sha256": "f540f1917143637b901c365275ee2d4447b2c910a9c37d9c01e25bc839e87dc1",
+  "session_methodology": "Methods ending in _session or _materialized perform 20 identical aggregations after one untimed warm-up; seconds is the whole 20-query phase, not one query. Individual latencies are retained. Materialized routes copy rows into a session DuckDB table or Polars DataFrame before timing. Preparation, including that copy, is reported separately. Every repeated answer is checked; no answer cache is used.",
+  "environment": {
+    "python": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+    "versions": {
+      "duckdb": "1.5.5",
+      "lxml": "6.1.1",
+      "openpyxl": "3.1.5",
+      "polars": "1.44.2",
+      "fastexcel": "0.21.0",
+      "pandas": "2.3.1",
+      "python-calamine": "0.8.2"
+    }
+  },
+  "methodology": "Fresh process per trial, fixed randomized order; OS cache not flushed. Cold time includes method imports, load, projection, aggregation, close; excludes fixture creation, temporary-directory cleanup and independent validation. Cached rows exclude preparation/imports and measure a new SheetJet workbook session or Polars Parquet query; setup time is reported separately. RSS sampled every 10ms includes setup/validation and can miss spikes. All methods use the same selected sheets and aggregate inputs; returned answers match independent arithmetic. Cache comparison includes a peer Parquet workflow. Patch tasks edit the small Assumptions sheet, not a large sheet. No native Excel verification. No claim of universal superiority.",
+  "medians": [
+    {
+      "method": "sheetjet",
+      "seconds": 14.309159700060263,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 125.9375
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.31112670013681054,
+      "setup_seconds": 14.139561400050297,
+      "peak_rss_mb": 128.734375
+    }
+  ],
+  "trials": [
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.23131489986553788,
+      "setup_seconds": 13.327437200117856,
+      "peak_rss_mb": 128.734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.011239,
+          "range_read": 0.008887,
+          "persistent_table_read": 0.144017,
+          "query": 0.003695
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.03595409984700382
+      ]
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 14.309159700060263,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 124.52734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.061249,
+          "range_read": 0.040667,
+          "table_staging": 13.360737,
+          "persistent_table_write": 0.05496,
+          "query": 0.00525
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.043437999906018376
+      ]
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.31112670013681054,
+      "setup_seconds": 14.139561400050297,
+      "peak_rss_mb": 126.97265625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.018369,
+          "range_read": 0.012244,
+          "persistent_table_read": 0.197889,
+          "query": 0.004422
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.03820640011690557
+      ]
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.32618520013056695,
+      "setup_seconds": 14.14384109992534,
+      "peak_rss_mb": 129.2734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.009182,
+          "range_read": 0.008263,
+          "persistent_table_read": 0.227423,
+          "query": 0.009146
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.054868100211024284
+      ]
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 14.515434099826962,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 125.9375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.033996,
+          "range_read": 0.036159,
+          "table_staging": 13.663614,
+          "persistent_table_write": 0.074529,
+          "query": 0.004816
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.044094800017774105
+      ]
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 12.395987899973989,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 127.328125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.131867,
+          "range_read": 0.05428,
+          "table_staging": 11.410258,
+          "persistent_table_write": 0.045564,
+          "query": 0.005754
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      },
+      "query_repetitions": 1,
+      "query_latencies_seconds": [
+        0.04087430005893111
+      ]
+    }
+  ]
+}

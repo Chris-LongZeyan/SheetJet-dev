@@ -16,15 +16,19 @@ library. No LLM API key, embeddings service, or Excel installation is required.
 1 assumption edit     → XML patch → untouched workbook parts preserved
 ```
 
-**New in v0.2:** copy untouched ZIP records without decompressing them, reuse typed
-projections across sessions, and query selected ranges from multiple sheets with
-source-sheet provenance. See the [peer comparison](docs/peer-benchmarks.md), including
-the workloads where Calamine and Polars are faster.
+**New in v0.3:** stream scalar values without building XML trees, query cached
+Parquet directly, and retain a restricted SQL connection for related queries.
+For repeated scans, `query_engine.materialize("Sales")` explicitly trades one
+session-local copy for lower query latency. See the [v0.3 measurements](docs/performance-v0.3.md).
+Untouched ZIP records remain byte-preserved, and typed projections remain reusable
+across sessions and edits to other sheets.
 
-In the million-row, four-sheet scale check, changing one assumption took **0.174 s
-and 36 MiB peak RSS**, versus **123.9 s and 2,031 MiB** for openpyxl's load/save path.
-That is one synthetic trial and an edit on a small assumptions sheet. Polars won the
-cold aggregation task. [Full results and limits](docs/peer-benchmarks.md).
+In the current four-sheet, 100k-row comparison, changing one assumption took a median
+**0.105 s and 38.5 MiB peak RSS**, versus **7.247 s and 258.8 MiB** for openpyxl's
+load/save path. Both use three synthetic trials and edit a small assumptions sheet.
+At one million rows, cache reopening plus aggregation fell from **0.311 s to 0.124 s**
+against a fresh v0.2 rerun. Native readers still win cold aggregation.
+[Full results, raw trials and limits](docs/performance-v0.3.md).
 
 ## The useful difference
 
@@ -45,7 +49,8 @@ Numeric XML values reach DECIMAL conversion without passing through a Python flo
 **Performance claims come with a script.** Compare cold metadata/lookup/aggregation,
 warm SQL, memory use and edits against openpyxl, pandas with two reader engines,
 Calamine, and Polars/Calamine. A Polars-Parquet baseline also tests cached queries.
-See [current peer measurements](docs/peer-benchmarks.md) and the
+See [current peer measurements](docs/performance-v0.3.md), the
+[v0.2 peer comparison](docs/peer-benchmarks.md), and the
 [original v0.1 measurements](docs/benchmarks.md).
 Ordinary deterministic analysis also avoids an LLM context dump; SheetJet packages
 that approach with enforceable budgets, discovery tools and audited edits.
@@ -64,6 +69,10 @@ python -m examples.demo --rows 10000
 The offline demo creates a transaction workbook, finds an assumption, computes
 regional totals, changes one assumption and verifies the saved output. Generated
 files stay under `benchmark-output/demo/`. Use `--rows 1000000` for the large version.
+
+Run `python -m examples.multisheet` to see reordered headers align across sheets,
+exact decimal totals, optional materialization, and both period caches reused after
+an assumption edit. [Read the runnable example](examples/multisheet.py).
 
 ```python
 from sheetjet import Workbook
@@ -92,6 +101,11 @@ with Workbook("book.xlsx") as book:
 
 The example expects a table named `Sales` with those columns. For an unnamed table,
 pass `sheet=` and `ref=` to `query_engine.load`. Its first row supplies the headers.
+
+For a series of queries that repeatedly scan the same data, call
+`book.query_engine.materialize("Sales")` once after loading. The copy is local to
+that session and consumes temporary storage; cache loading stays lazy by default.
+Use the same open `Workbook` for related queries to reuse its restricted connection.
 
 ## CLI and agent skill
 

@@ -32,6 +32,52 @@ class QueryEngine:
         self.db.execute("SET preserve_insertion_order = false")
         self.loaded = {}
         self.unions = {}
+        self.sources = {}
+        self.readonly = False
+        self.materialized = set()
+
+    def _write_connection(self):
+        if self.readonly:
+            import duckdb
+
+            self.db.close()
+            self.db = duckdb.connect(self.path)
+            self.db.execute("SET memory_limit = ?", [self.memory_limit])
+            self.db.execute("SET threads = 4")
+            self.db.execute("SET preserve_insertion_order = false")
+            self.readonly = False
+
+    @staticmethod
+    def _stamp(path):
+        st = path.stat()
+        return st.st_size, st.st_mtime_ns, st.st_ctime_ns
+
+    def _publish(self, name, path):
+        """Publish a projection without copying its data into the session database."""
+        path = path.resolve()
+        literal = "'" + str(path).replace("'", "''") + "'"
+        stamp = self._stamp(path)
+        self._replace_view(name, f"SELECT * FROM read_parquet({literal})")
+        self.sources[name.casefold()] = (path, stamp)
+
+    def _replace_view(self, name, sql):
+        self.db.execute("BEGIN")
+        try:
+            if name.casefold() in self.materialized:
+                self.db.execute(f"DROP TABLE {identifier(name)}")
+            self.db.execute(f"CREATE OR REPLACE VIEW {identifier(name)} AS {sql}")
+            self.db.execute("COMMIT")
+        except Exception:
+            self.db.execute("ROLLBACK")
+            raise
+        self.materialized.discard(name.casefold())
+
+    def _drop(self, name):
+        kind = "TABLE" if name.casefold() in self.materialized else "VIEW"
+        self.db.execute(f"DROP {kind} IF EXISTS {identifier(name)}")
+        self.materialized.discard(name.casefold())
+        self.sources.pop(name.casefold(), None)
+        self.loaded.pop(name.casefold(), None)
 
     def load(
         self,
@@ -45,6 +91,7 @@ class QueryEngine:
     ):
         """Stage one rectangular table once. Explicit schema avoids sample-based type loss."""
         self.w.package.check()
+        self._write_connection()
         table = self.w.package.tables.get(name)
         if table:
             sheet, ref = table["sheet"], table["range"]
@@ -59,7 +106,7 @@ class QueryEngine:
             "rows"
         ][0]
         if any(not isinstance(x, str) or not x.strip() for x in headers) or len(
-            set(headers)
+            {x.casefold() for x in headers}
         ) != len(headers):
             raise SheetJetError(
                 "Headers must be nonblank, unique strings; choose the correct header row"
@@ -91,7 +138,7 @@ class QueryEngine:
         if p.shared_strings_part:
             parts.append(p.shared_strings_part)
         signature = hashlib.sha256(
-            json.dumps(["projection-v2", p.signature(*parts), key, r2]).encode()
+            json.dumps(["projection-v3", p.signature(*parts), key, r2]).encode()
         ).hexdigest()
         cached = p.cache_dir / ("projection-" + signature + ".parquet")
         if persistent_cache and cached.is_file():
@@ -99,10 +146,7 @@ class QueryEngine:
 
             try:
                 with self.w.metrics.time("persistent_table_read"):
-                    self.db.execute(
-                        f"CREATE OR REPLACE TABLE {identifier(name)} AS SELECT * FROM read_parquet(?)",
-                        [str(cached)],
-                    )
+                    self._publish(name, cached)
                 p.check()
                 self.loaded[name.casefold()] = key
                 self.w.metrics.add("persistent_table_hits")
@@ -148,12 +192,14 @@ class QueryEngine:
                     writer.writerow([null] * len(selected))
                     rows += 1
                     next_row += 1
-            # Parsing is deterministic and strict; no inference, silent row skipping, or type coercion to null.
-            self.db.execute("BEGIN")
+            # Convert directly to a typed projection; avoid a second copy in the session DB.
+            import uuid
+
+            if not persistent_cache:
+                cached = Path(self.temp.name) / (uuid.uuid4().hex + ".parquet")
+            pending = cached.with_suffix("." + uuid.uuid4().hex + ".tmp")
+            stage_view = "_sheetjet_stage_" + uuid.uuid4().hex
             try:
-                self.db.execute(f"DROP TABLE IF EXISTS {identifier(name)}")
-                defs = ",".join(identifier(c) + " " + schema[c] for c in selected)
-                self.db.execute(f"CREATE TABLE {identifier(name)} ({defs})")
                 if rows:
                     self.db.read_csv(
                         str(csvpath),
@@ -163,30 +209,30 @@ class QueryEngine:
                         delimiter=",",
                         quotechar='"',
                         escapechar='"',
-                    ).create_view("_sheetjet_stage", replace=True)
-                    self.db.execute(f"INSERT INTO {identifier(name)} SELECT * FROM _sheetjet_stage")
-                    self.db.execute("DROP VIEW _sheetjet_stage")
-                self.db.execute("COMMIT")
-            except Exception:
-                self.db.execute("ROLLBACK")
-                raise
-            finally:
-                csvpath.unlink(missing_ok=True)
-        p.check()
-        if persistent_cache:
-            import uuid
-
-            pending = cached.with_suffix("." + uuid.uuid4().hex + ".tmp")
-            try:
-                with self.w.metrics.time("persistent_table_write"):
+                    ).create_view(stage_view, replace=True)
+                else:
+                    defs = ",".join(
+                        f"CAST(NULL AS {schema[c]}) AS {identifier(c)}" for c in selected
+                    )
                     self.db.execute(
-                        f"COPY {identifier(name)} TO ? (FORMAT PARQUET, COMPRESSION ZSTD)",
+                        f"CREATE VIEW {identifier(stage_view)} AS SELECT {defs} WHERE false"
+                    )
+                p.check()
+                with self.w.metrics.time("projection_write"):
+                    self.db.execute(
+                        f"COPY {identifier(stage_view)} TO ? (FORMAT PARQUET, COMPRESSION ZSTD)",
                         [str(pending)],
                     )
+                    p.check()
                     os.replace(pending, cached)
-                self.w.metrics.add("persistent_table_writes")
+                    self._publish(name, cached)
+                if persistent_cache:
+                    self.w.metrics.add("persistent_table_writes")
             finally:
+                self.db.execute(f"DROP VIEW IF EXISTS {identifier(stage_view)}")
                 pending.unlink(missing_ok=True)
+                csvpath.unlink(missing_ok=True)
+        p.check()
         self.loaded[name.casefold()] = key
         return {
             "table": name,
@@ -235,19 +281,51 @@ class QueryEngine:
                 sources.append(
                     f"SELECT *, {quoted} AS {identifier(source_column)} FROM {identifier(alias)}"
                 )
-            self.db.execute(
-                f"CREATE OR REPLACE VIEW {identifier(name)} AS " + " UNION ALL ".join(sources)
-            )
+            self._replace_view(name, " UNION ALL ".join(sources))
         except Exception:
             for alias in created:
-                self.db.execute(f"DROP TABLE IF EXISTS {identifier(alias)}")
-                self.loaded.pop(alias.casefold(), None)
+                self._drop(alias)
             raise
         for old in self.unions.get(name.casefold(), []):
-            self.db.execute(f"DROP TABLE {identifier(old)}")
-            self.loaded.pop(old.casefold(), None)
+            self._drop(old)
         self.unions[name.casefold()] = created
         return {"table": name, "sheets": list(ranges), "columns": [*schema, source_column]}
+
+    def materialize(self, name):
+        """Opt into one session-local copy for repeated scans, paying its cost explicitly."""
+        import uuid
+
+        self.w.package.check()
+        if name.casefold() not in self.loaded and name.casefold() not in self.unions:
+            raise SheetJetError("Materialize an already loaded relation")
+        self._check_sources()
+        if name.casefold() in self.materialized:
+            return {"table": name, "materialized": True, "cached": True}
+        self._write_connection()
+        stage = "_sheetjet_materialized_" + uuid.uuid4().hex
+        self.db.execute("BEGIN")
+        try:
+            with self.w.metrics.time("materialization"):
+                self.db.execute(
+                    f"CREATE TABLE {identifier(stage)} AS SELECT * FROM {identifier(name)}"
+                )
+                self.db.execute(f"DROP VIEW {identifier(name)}")
+                self.db.execute(f"ALTER TABLE {identifier(stage)} RENAME TO {identifier(name)}")
+                self.w.package.check()
+                self._check_sources()
+                self.db.execute("COMMIT")
+        except Exception:
+            self.db.execute("ROLLBACK")
+            raise
+        self.materialized.add(name.casefold())
+        return {"table": name, "materialized": True, "cached": False}
+
+    def _check_sources(self):
+        for path, stamp in self.sources.values():
+            if not path.is_file() or self._stamp(path) != stamp:
+                raise SheetJetError(
+                    "Projection cache changed during this session; reopen before continuing"
+                )
 
     def query(self, sql, params=None, budget: Budget | None = None):
         self.w.package.check()
@@ -258,32 +336,35 @@ class QueryEngine:
         statements = self.db.extract_statements(sql)
         if len(statements) != 1 or statements[0].type != duckdb.StatementType.SELECT:
             raise SheetJetError("Only one SELECT query is allowed")
+        self._check_sources()
         # Disabling external access also prevents SQL from reading arbitrary local files or installing extensions.
-        self.db.close()
-        reader = None
-        try:
-            reader = duckdb.connect(
-                self.path,
-                read_only=True,
-                config={
-                    "enable_external_access": False,
-                    "memory_limit": self.memory_limit,
-                    "threads": 4,
-                },
-            )
-            with self.w.metrics.time("query"):
-                result = reader.execute(
-                    f"SELECT * FROM ({sql.rstrip().rstrip(';')}) AS answer LIMIT {budget.max_rows + 1}",
-                    params or [],
+        if not self.readonly:
+            self.db.close()
+            try:
+                self.db = duckdb.connect(
+                    self.path,
+                    read_only=True,
+                    config={"memory_limit": self.memory_limit, "threads": 4},
                 )
-                columns = [d[0] for d in result.description]
-                rows = result.fetchall()
-        finally:
-            if reader:
-                reader.close()
-            self.db = duckdb.connect(self.path)
-            self.db.execute("SET memory_limit = ?", [self.memory_limit])
-            self.db.execute("SET threads = 4")
+                self.db.execute(
+                    "SET allowed_paths = ?", [[str(path) for path, _ in self.sources.values()]]
+                )
+                self.db.execute("SET enable_external_access = false")
+                self.db.execute("SET lock_configuration = true")
+                self.readonly = True
+            except Exception:
+                # Never leave a partially configured reader available to a later query.
+                self.db.close()
+                self.readonly = True
+                self._write_connection()
+                raise
+        with self.w.metrics.time("query"):
+            bounded_sql = (
+                f"SELECT * FROM ({sql.rstrip().rstrip(';')}) AS answer LIMIT {budget.max_rows + 1}"
+            )
+            result = self.db.execute(bounded_sql, params or [])
+            columns = [d[0] for d in result.description]
+            rows = result.fetchall()
         if len(rows) > budget.max_rows or len(rows) * len(columns) > budget.max_cells:
             raise BudgetExceeded(
                 "Query output exceeds response budget; aggregate or use a smaller LIMIT"

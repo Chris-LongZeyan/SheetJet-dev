@@ -40,7 +40,10 @@ formula patterns and metadata pagination before explicitly raising a budget.
 Pagination and LIMIT return subsets; state that scope when interpreting them.
 
 Keep a Python `Workbook` session open for related operations. The session caches
-ranges and staged tables. Projected, typed Parquet caches survive sessions and reuse
+ranges and reuses a restricted SQL connection. Cache loads query Parquet lazily.
+For repeated scans of the same loaded relation, `query_engine.materialize(name)`
+pays for one session-local table copy; avoid that extra copy for one-off queries.
+Projected, typed Parquet caches survive sessions and reuse
 unchanged sheets even after another sheet is edited. Their keys include sheet and
 shared-string signatures, ranges, selected columns, schema and formula-cache policy.
 Use `persistent_cache=False` or `--no-persistent-cache` to opt out. The text index also

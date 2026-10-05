@@ -1,0 +1,353 @@
+{
+  "rows_parameter": 1000,
+  "fixture_count": 10,
+  "passed": true,
+  "results": [
+    {
+      "fixture": {
+        "file": "transactions.xlsx",
+        "kind": "transactions",
+        "rows": 1000,
+        "native": true
+      },
+      "seconds": 1.014120199950412,
+      "response_characters": 115,
+      "untouched_parts_byte_equal": 10,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 10,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.008736,
+          "range_read": 0.002203,
+          "projection_write": 0.016645,
+          "table_staging": 0.061905,
+          "query": 0.011312,
+          "validation": 0.009344,
+          "patching": 0.03226
+        },
+        "counts": {
+          "characters_exposed": 1181,
+          "estimated_tokens_exposed": 297,
+          "cells_scanned": 5005,
+          "cells_decoded": 2005,
+          "range_reads": 1,
+          "result_cells": 13,
+          "persistent_table_writes": 1,
+          "compressed_bytes_copied": 35260,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "financial-model.xlsx",
+        "kind": "financial-model",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.1748611000366509,
+      "response_characters": 117,
+      "untouched_parts_byte_equal": 8,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 8,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.005692,
+          "indexing": 0.033483,
+          "validation": 0.014534,
+          "patching": 0.040567
+        },
+        "counts": {
+          "characters_exposed": 900,
+          "estimated_tokens_exposed": 227,
+          "cells_scanned": 603,
+          "cells_decoded": 603,
+          "compressed_bytes_copied": 3903,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "formula-heavy.xlsx",
+        "kind": "formula-heavy",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.20596240018494427,
+      "response_characters": 118,
+      "untouched_parts_byte_equal": 8,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 8,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.015483,
+          "indexing": 0.085748,
+          "validation": 0.019152,
+          "patching": 0.060149
+        },
+        "counts": {
+          "characters_exposed": 903,
+          "estimated_tokens_exposed": 227,
+          "cells_scanned": 3003,
+          "cells_decoded": 3003,
+          "compressed_bytes_copied": 3903,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "formatting-heavy.xlsx",
+        "kind": "formatting-heavy",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.08985309978015721,
+      "response_characters": 2378,
+      "untouched_parts_byte_equal": 8,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 8,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.011263,
+          "range_read": 0.001984,
+          "validation": 0.019779,
+          "patching": 0.051284
+        },
+        "counts": {
+          "characters_exposed": 5282,
+          "estimated_tokens_exposed": 1322,
+          "cells_scanned": 6,
+          "cells_decoded": 6,
+          "range_reads": 2,
+          "compressed_bytes_copied": 9741,
+          "members_recompressed": 1,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "hidden-names.xlsx",
+        "kind": "hidden-names",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.03525250009261072,
+      "response_characters": 451,
+      "untouched_parts_byte_equal": 17,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 17,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.006976,
+          "validation": 0.005298,
+          "patching": 0.02265
+        },
+        "counts": {
+          "characters_exposed": 2833,
+          "estimated_tokens_exposed": 709,
+          "compressed_bytes_copied": 7293,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "merged.xlsx",
+        "kind": "merged",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.07146649993956089,
+      "response_characters": 623,
+      "untouched_parts_byte_equal": 7,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 7,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.004649,
+          "indexing": 0.010107,
+          "validation": 0.006777,
+          "patching": 0.024053
+        },
+        "counts": {
+          "characters_exposed": 1759,
+          "estimated_tokens_exposed": 441,
+          "cells_scanned": 69,
+          "cells_decoded": 69,
+          "compressed_bytes_copied": 3508,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "charts-pivots.xlsx",
+        "kind": "charts-pivots",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.03173620020970702,
+      "response_characters": 69,
+      "untouched_parts_byte_equal": 14,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 14,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.003476,
+          "validation": 0.005816,
+          "patching": 0.022483
+        },
+        "counts": {
+          "characters_exposed": 588,
+          "estimated_tokens_exposed": 148,
+          "compressed_bytes_copied": 6301,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "messy.xlsx",
+        "kind": "messy",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.17198270000517368,
+      "response_characters": 39,
+      "untouched_parts_byte_equal": 10,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 10,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.004968,
+          "range_read": 0.003214,
+          "projection_write": 0.024892,
+          "table_staging": 0.055007,
+          "query": 0.009322,
+          "validation": 0.007292,
+          "patching": 0.021818
+        },
+        "counts": {
+          "characters_exposed": 915,
+          "estimated_tokens_exposed": 230,
+          "cells_scanned": 784,
+          "cells_decoded": 392,
+          "range_reads": 2,
+          "result_cells": 5,
+          "persistent_table_writes": 2,
+          "compressed_bytes_copied": 4181,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "interconnected.xlsx",
+        "kind": "interconnected",
+        "native": true,
+        "note": "Native Excel rendering/recalculation not verified"
+      },
+      "seconds": 0.049183000111952424,
+      "response_characters": 159,
+      "untouched_parts_byte_equal": 56,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 56,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.008267,
+          "range_read": 0.000359,
+          "validation": 0.010939,
+          "patching": 0.031653
+        },
+        "counts": {
+          "characters_exposed": 3621,
+          "estimated_tokens_exposed": 907,
+          "cells_scanned": 1,
+          "cells_decoded": 1,
+          "range_reads": 1,
+          "compressed_bytes_copied": 22531,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "fixture": {
+        "file": "macro-preservation.xlsm",
+        "kind": "macro-preservation",
+        "native": false,
+        "note": "Opaque canary, not executable VBA; supply a real XLSM for native macro verification"
+      },
+      "seconds": 0.036681200144812465,
+      "response_characters": 68,
+      "untouched_parts_byte_equal": 8,
+      "validation": {
+        "xml_parse": "passed",
+        "changed_cells_checked": 1,
+        "untouched_parts_crc_verified": 8,
+        "native_excel_recalculation": "not performed"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.004972,
+          "validation": 0.005581,
+          "patching": 0.026448
+        },
+        "counts": {
+          "characters_exposed": 590,
+          "estimated_tokens_exposed": 148,
+          "compressed_bytes_copied": 3695,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    }
+  ],
+  "scope": "Generated OOXML and opaque-byte preservation; no native Excel rendering, pivot refresh or VBA execution"
+}

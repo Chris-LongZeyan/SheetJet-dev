@@ -20,4 +20,5 @@ jobs:
       - run: python -m ruff check src tests benchmarks examples
       - run: python -m ruff format --check src tests benchmarks examples
       - run: python -m examples.demo --rows 1000
+      - run: python -m examples.multisheet
       - run: python -m benchmarks.fixtures benchmark-output/ci --rows 100

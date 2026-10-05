@@ -275,36 +275,9 @@ class Package:
 
     def projected_rows(self, sheet, ref, columns, allow_cached_formulas=False):
         """Decode scalar projections directly, without allocating cell metadata dictionaries."""
-        from .core import address
+        from .projection import projected_rows
 
-        self.check()
-        r1, _, r2, _ = bounds(ref)
-        selected = {address(1, c)[:-1]: i for i, c in enumerate(columns)}
-        with self.zip.open(self.sheets[sheet]["part"]) as stream:
-            for _, row in ET.iterparse(
-                stream, events=("end",), tag=Q + "row", resolve_entities=False, no_network=True
-            ):
-                rn = int(row.get("r"))
-                if rn > r2:
-                    break
-                if rn >= r1:
-                    values = [None] * len(columns)
-                    scanned = decoded = 0
-                    for node in row.iterchildren(Q + "c"):
-                        scanned += 1
-                        slot = selected.get(node.get("r").rstrip("0123456789"))
-                        if slot is not None:
-                            values[slot] = self.cell(
-                                node,
-                                values_only=True,
-                                allow_cached_formulas=allow_cached_formulas,
-                                numeric_text=True,
-                            )
-                            decoded += 1
-                    self.metrics.add("cells_scanned", scanned)
-                    self.metrics.add("cells_decoded", decoded)
-                    yield rn, values
-                release(row)
+        yield from projected_rows(self, sheet, ref, columns, allow_cached_formulas)
 
     def rows(self, sheet, ref=None, columns=None):
         self.check()

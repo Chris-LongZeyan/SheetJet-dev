@@ -6,7 +6,7 @@ flowchart LR
     B --> C[Local SQLite search index]
     C --> D[Task plan and exact ranges]
     D --> E[Streaming projection]
-    E --> F[Disk-backed DuckDB]
+    E --> F[Restricted DuckDB queries]
     E --> J[Per-sheet typed Parquet cache]
     J --> F
     D --> G[XML span patches]
@@ -29,7 +29,8 @@ No embeddings, network service or LLM API is required for execution.
 | Shared strings | Streaming import into SQLite with a 4,096-entry LRU | Avoids a million-entry Python string array |
 | Ranges | lxml row streaming, projected cell decoding, 16-entry cache | Late rows still require earlier XML traversal |
 | Formulas | Normalized vertical runs and lexical precedent tokens | No calculation; no complete dependency graph |
-| Analytics | Direct scalar projection into typed DuckDB, persistent per-sheet Parquet | Explicit types, exact numeric lexemes, reusable projections |
+| Analytics | Expat scalar events, typed CSV-to-Parquet conversion, lazy DuckDB views | Exact numeric lexemes; no row trees or second data copy on cache load |
+| Repeated scans | Explicit session materialization and reusable read-only connection | Pay for a local table once when repeated scans justify it |
 | Multi-sheet queries | Header-name projection and provenance, union of selected ranges | Unrelated sheets excluded; per-sheet invalidation |
 | Edits | Expat byte offsets, XML span replacement, compressed ZIP record copying | Recompress only changed parts; preserve opaque compressed records |
 | Validation | Changed-sheet parse, expected cells, sheet/name/table identities, ZIP CRC/size | No whole-workbook cell-object reload |
@@ -40,7 +41,8 @@ reported small/medium/large/huge strategy class. All classes use streaming paths
 there is no size-triggered full object-model load. Query memory is capped at 512 MB
 by default for DuckDB (this is not a cap on total Python/process RSS). Range caches
 and active SQL relations are session-local. Sheet indexes, shared strings and typed
-Parquet projections persist in the chosen cache directory. Data caches have no automatic
+Parquet projections persist in the chosen cache directory. The text index is opened
+only when search or index-based inspection needs it. Data caches have no automatic
 retention policy; callers can opt out per load or use temporary cache directories.
 
 Index invalidation uses worksheet/table/shared-string ZIP CRCs and lengths plus
@@ -53,13 +55,36 @@ Projection cache identities include the selected sheet/shared-string part signat
 range, column order, schema, formula-cache policy, effective table endpoint and format
 version. Input filename is excluded: editing an assumption in a new output file does
 not invalidate an untouched transaction sheet. A complete Parquet file is atomically
-published after successful typed conversion. Corrupt cache files are rebuilt from
-the workbook. This cache contains source-derived data; it is not a trust boundary
+published after successful typed conversion. Invalid cache footers detected during
+loading trigger a rebuild from the workbook. Lazy queries can encounter corrupt data
+pages later; these fail instead of returning a partial answer. Remove that cache and
+reopen to rebuild. A cache file replaced or removed during a session also fails closed.
+This cache contains source-derived data; it is not a trust boundary
 against local tampering. It never proves freshness of Excel's formula caches.
 
 `load_sheets` takes explicit ranges and a common schema, stages only named columns,
 aligns reordered headers, and adds source-sheet provenance. Each sheet is reusable
 independently. Inputs with different units or meanings still require semantic review.
+
+The scalar parser consumes 128 KiB XML chunks and queues only the rows produced by
+that chunk. It recognizes namespace-qualified cell paths, omits phonetic annotations,
+and retains numeric source text until SQL conversion. DTDs, duplicate projected cells,
+out-of-order rows and cells with mismatched row coordinates are rejected. Projection
+tests compare sparse mixed-type UTF-8/UTF-16 sheets against the existing tree decoder.
+
+SQL sees views over exact projection files. A separate read-only connection permits
+only those files through `allowed_paths`, disables other external access, and locks
+configuration before executing user SQL. The connection stays open across queries
+and is replaced when staging changes. A single SELECT and response budgets remain
+mandatory. Loaded projections are local, trusted data; this is not a general hostile
+SQL execution service. See DuckDB's [file access controls](https://duckdb.org/docs/stable/configuration/overview).
+
+Parquet views let DuckDB push column selection and predicates into the scan without
+copying the complete projection into another database. The explicit
+`query_engine.materialize(name)` method makes a session-local table when repeated
+scans justify that copy. It handles both one-sheet relations and multi-sheet unions;
+a failed conversion preserves the published relation. The copy is removed when the
+session closes. See DuckDB's [Parquet guidance](https://duckdb.org/docs/stable/data/parquet/overview).
 
 ## Preservation boundaries
 

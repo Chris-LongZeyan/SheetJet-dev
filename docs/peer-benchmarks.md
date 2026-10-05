@@ -1,5 +1,8 @@
 # v0.2 peer comparison
 
+Archived v0.2 measurements. See the [v0.3 performance report](performance-v0.3.md)
+for the revised parser, lazy cache loading and repeated-query comparisons.
+
 Measured on 5 October 2026. The goal is to expose useful strengths and tradeoffs,
 not to claim that one engine wins every workload.
 

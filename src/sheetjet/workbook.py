@@ -24,13 +24,16 @@ class Workbook:
         )
         with self.metrics.time("open"):
             self.package = Package(path, cache_dir, self.metrics)
-            try:
-                self.index = Index(self.package)
-            except Exception:
-                self.package.close()
-                raise
+        self._index = None
         self._ranges = OrderedDict()
         self._query = None
+
+    @property
+    def index(self):
+        if self._index is None:
+            self.package.check()
+            self._index = Index(self.package)
+        return self._index
 
     def serialize(self, value, budget=None):
         return compact(value, budget or self.budget, self.metrics)
@@ -356,7 +359,8 @@ class Workbook:
     def close(self):
         if self._query:
             self._query.close()
-        self.index.close()
+        if self._index:
+            self._index.close()
         self.package.close()
 
     def __enter__(self):

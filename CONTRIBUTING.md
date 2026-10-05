@@ -26,3 +26,10 @@ when presenting cache speedups. Keep compressed-copy tests covering ZIP64, descr
 Unicode names and comments. New cache formats must version their key and test changed
 sheet invalidation, formula-policy isolation, null/empty preservation and corruption
 recovery. Benchmark code should not change while a recorded matrix is running.
+
+Projection optimizations must retain formula/error checks and numeric lexemes.
+Use the randomized sparse-sheet decoder comparisons, namespace/encoding tests and
+restricted-query tests when modifying that path. Measure cold reads, cache reopening,
+steady queries and materialized queries separately, with preparation time disclosed
+for both SheetJet and peers. Raw reports record source hashes to identify the code
+that produced the measurements.
