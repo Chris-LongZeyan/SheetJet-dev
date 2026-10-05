@@ -1,0 +1,359 @@
+{
+  "rows_per_sheet": 250000,
+  "selected_sheets": 4,
+  "total_rows": 1000000,
+  "shared_strings": true,
+  "repeats": 1,
+  "file_bytes": 24691884,
+  "file_sha256": "61a7871c2d02ffa1d9c1dc42e79325b57ae7ac8b7faa8c7dcab4da064caa53ca",
+  "environment": {
+    "python": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+    "versions": {
+      "duckdb": "1.5.5",
+      "lxml": "6.1.1",
+      "openpyxl": "3.1.5",
+      "polars": "1.44.2",
+      "fastexcel": "0.21.0",
+      "pandas": "2.3.1",
+      "python-calamine": "0.8.2"
+    }
+  },
+  "methodology": "Fresh process per trial, fixed randomized order; OS cache not flushed. Cold time includes method imports, load, projection, aggregation, close; excludes fixture creation, temporary-directory cleanup and independent validation. Cached rows exclude preparation/imports and measure a new SheetJet workbook session or Polars Parquet query; setup time is reported separately. RSS sampled every 10ms includes setup/validation and can miss spikes. All methods use the same selected sheets and aggregate inputs; returned answers match independent arithmetic. Cache comparison includes a peer Parquet workflow. Patch tasks edit the small Assumptions sheet, not a large sheet. No native Excel verification. No claim of universal superiority.",
+  "medians": [
+    {
+      "method": "sheetjet",
+      "seconds": 21.63791220006533,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 125.93359375
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 35.10491109988652,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 66.5859375
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 48.83601920004003,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 237.734375
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 7.52361509995535,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 478.39453125
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 2.3337085000239313,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 177.8125
+    },
+    {
+      "method": "calamine",
+      "seconds": 2.4323917001020163,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 152.53515625
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.3365757998544723,
+      "setup_seconds": 20.803879899904132,
+      "peak_rss_mb": 128.9765625
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.010758499847725034,
+      "setup_seconds": 1.7432828999590129,
+      "peak_rss_mb": 177.96484375
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.1742610998917371,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 36.0390625
+    },
+    {
+      "method": "openpyxl_patch",
+      "seconds": 123.85760110011324,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 2031.40625
+    }
+  ],
+  "trials": [
+    {
+      "method": "calamine",
+      "seconds": 2.4323917001020163,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 152.53515625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 48.83601920004003,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 237.734375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.3365757998544723,
+      "setup_seconds": 20.803879899904132,
+      "peak_rss_mb": 128.9765625,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.01366,
+          "range_read": 0.011261,
+          "persistent_table_read": 0.204842,
+          "query": 0.010513
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      }
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.010758499847725034,
+      "setup_seconds": 1.7432828999590129,
+      "peak_rss_mb": 177.96484375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 21.63791220006533,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 125.93359375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.135575,
+          "range_read": 0.277498,
+          "table_staging": 20.39117,
+          "persistent_table_write": 0.068829,
+          "query": 0.005703
+        },
+        "counts": {
+          "shared_strings_loaded": 1013,
+          "cells_scanned": 5000020,
+          "cells_decoded": 2000020,
+          "range_reads": 4,
+          "characters_exposed": 846,
+          "estimated_tokens_exposed": 215,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      }
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 35.10491109988652,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 66.5859375,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 7.52361509995535,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 478.39453125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "openpyxl_patch",
+      "seconds": 123.85760110011324,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 2031.40625,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.1742610998917371,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 36.0390625,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.107453,
+          "validation": 0.007984,
+          "patching": 0.042918
+        },
+        "counts": {
+          "compressed_bytes_copied": 24690053,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 2.3337085000239313,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 177.8125,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    }
+  ]
+}

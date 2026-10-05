@@ -203,6 +203,13 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# Local execution dependencies, workbook caches and generated benchmark fixtures
+.test-deps/
+.run-tmp/
+.sheetjet-cache/
+benchmark-output/
+*.sheetjet.json
+
 # Ruff stuff:
 .ruff_cache/
 

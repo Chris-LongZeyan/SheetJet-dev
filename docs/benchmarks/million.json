@@ -1,0 +1,348 @@
+{
+  "environment": {
+    "python": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+    "duckdb": "1.5.5",
+    "openpyxl": "3.1.5",
+    "lxml": "6.1.1"
+  },
+  "rows": 1000000,
+  "cells": 5000007,
+  "repeats": 1,
+  "file_bytes": 33546560,
+  "file_sha256": "ba2c9853cdf6044c540c487d5cf0c7cde2d3e346758690e677b0b965a4c1a6df",
+  "correctness": "all aggregation and lookup answers matched independent fixture arithmetic",
+  "methodology": "Fresh process per trial; OS file cache not flushed. Wall time includes imports, open, staging, execution, cleanup except warm_query (only repeated query and cleanup). Peak RSS sampled every 10ms includes imports/staging. Token estimate = ceil(JSON characters/4), not a tokenizer count or measured LLM usage. Context includes full rows only for naive_context, bounded answer for other methods. Synthetic data, not universal performance rankings.",
+  "medians": [
+    {
+      "method": "sheetjet_inspect",
+      "seconds": 0.09647200000472367,
+      "peak_rss_mb": 29.26953125,
+      "context_characters": 775,
+      "estimated_context_tokens": 194
+    },
+    {
+      "method": "openpyxl_inspect",
+      "seconds": 0.3171543999342248,
+      "peak_rss_mb": 44.01953125,
+      "context_characters": 63,
+      "estimated_context_tokens": 16
+    },
+    {
+      "method": "sheetjet_locate",
+      "seconds": 15.15647279995028,
+      "peak_rss_mb": 30.62890625,
+      "context_characters": 1,
+      "estimated_context_tokens": 1
+    },
+    {
+      "method": "openpyxl_locate",
+      "seconds": 66.68071699992288,
+      "peak_rss_mb": 128.9375,
+      "context_characters": 1,
+      "estimated_context_tokens": 1
+    },
+    {
+      "method": "sheetjet_aggregate",
+      "seconds": 42.26508959999774,
+      "peak_rss_mb": 144.1875,
+      "context_characters": 82,
+      "estimated_context_tokens": 21
+    },
+    {
+      "method": "openpyxl_stream",
+      "seconds": 78.13434240000788,
+      "peak_rss_mb": 128.9765625,
+      "context_characters": 82,
+      "estimated_context_tokens": 21
+    },
+    {
+      "method": "naive_context",
+      "seconds": 66.45125529996585,
+      "peak_rss_mb": 422.57421875,
+      "context_characters": 38701897,
+      "estimated_context_tokens": 9675475
+    },
+    {
+      "method": "sheetjet_warm_query",
+      "seconds": 0.10490259993821383,
+      "peak_rss_mb": 143.09375,
+      "context_characters": 82,
+      "estimated_context_tokens": 21
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 7.311482200049795,
+      "peak_rss_mb": 50.12109375,
+      "context_characters": 49,
+      "estimated_context_tokens": 13
+    }
+  ],
+  "measurements": [
+    {
+      "method": "sheetjet_inspect",
+      "seconds": 0.09647200000472367,
+      "peak_rss_mb": 29.26953125,
+      "context_characters": 775,
+      "estimated_context_tokens": 194,
+      "answer": {
+        "file": "transactions.xlsx",
+        "bytes": 33546560,
+        "xml_bytes": 243053933,
+        "strategy": "large",
+        "sheet_count": 2,
+        "sheets": [
+          {
+            "name": "Transactions",
+            "part": "xl/worksheets/sheet1.xml",
+            "state": "visible",
+            "range": "A1:E1000001",
+            "range_source": "declared (may be stale)",
+            "tables": [
+              "Transactions"
+            ],
+            "freeze_panes": {
+              "xSplit": "3",
+              "ySplit": "1",
+              "topLeftCell": "D2",
+              "state": "frozen"
+            }
+          },
+          {
+            "name": "Assumptions",
+            "part": "xl/worksheets/sheet2.xml",
+            "state": "visible",
+            "range": "A1:B1",
+            "range_source": "declared (may be stale)",
+            "tables": []
+          }
+        ],
+        "next_offset": null,
+        "named_range_count": 0,
+        "features": {
+          "external_links": 0,
+          "charts": 0,
+          "pivots": 0,
+          "vba": false,
+          "signed": false
+        },
+        "calculation": {
+          "calcId": "124519",
+          "fullCalcOnLoad": "1"
+        },
+        "counts_note": "Formula/nonempty counts and accurate dimensions require inspect_sheet(deep=True)"
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.041643
+        },
+        "counts": {
+          "characters_exposed": 775,
+          "estimated_tokens_exposed": 194
+        }
+      }
+    },
+    {
+      "method": "openpyxl_inspect",
+      "seconds": 0.3171543999342248,
+      "peak_rss_mb": 44.01953125,
+      "context_characters": 63,
+      "estimated_context_tokens": 16,
+      "answer": {
+        "sheets": [
+          "Transactions",
+          "Assumptions"
+        ],
+        "range": "A1:E1000001"
+      },
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_locate",
+      "seconds": 15.15647279995028,
+      "peak_rss_mb": 30.62890625,
+      "context_characters": 1,
+      "estimated_context_tokens": 1,
+      "answer": 1,
+      "metrics": {
+        "seconds": {
+          "open": 0.069405,
+          "range_read": 15.038888
+        },
+        "counts": {
+          "cells_scanned": 5,
+          "cells_decoded": 1,
+          "range_reads": 1,
+          "characters_exposed": 148,
+          "estimated_tokens_exposed": 37,
+          "result_cells": 1
+        }
+      }
+    },
+    {
+      "method": "openpyxl_locate",
+      "seconds": 66.68071699992288,
+      "peak_rss_mb": 128.9375,
+      "context_characters": 1,
+      "estimated_context_tokens": 1,
+      "answer": 1,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_aggregate",
+      "seconds": 42.26508959999774,
+      "peak_rss_mb": 144.1875,
+      "context_characters": 82,
+      "estimated_context_tokens": 21,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "metrics": {
+        "seconds": {
+          "open": 0.07943,
+          "range_read": 0.002117,
+          "table_staging": 41.426918,
+          "query": 0.011446
+        },
+        "counts": {
+          "cells_scanned": 5000010,
+          "cells_decoded": 2000007,
+          "range_reads": 1,
+          "characters_exposed": 307,
+          "estimated_tokens_exposed": 78,
+          "result_cells": 13
+        }
+      }
+    },
+    {
+      "method": "openpyxl_stream",
+      "seconds": 78.13434240000788,
+      "peak_rss_mb": 128.9765625,
+      "context_characters": 82,
+      "estimated_context_tokens": 21,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "metrics": {}
+    },
+    {
+      "method": "naive_context",
+      "seconds": 66.45125529996585,
+      "peak_rss_mb": 422.57421875,
+      "context_characters": 38701897,
+      "estimated_context_tokens": 9675475,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_warm_query",
+      "seconds": 0.10490259993821383,
+      "peak_rss_mb": 143.09375,
+      "context_characters": 82,
+      "estimated_context_tokens": 21,
+      "answer": [
+        [
+          "APAC",
+          124750000
+        ],
+        [
+          "Americas",
+          125250000
+        ],
+        [
+          "EMEA",
+          125000000
+        ],
+        [
+          "Other",
+          125500000
+        ]
+      ],
+      "metrics": {
+        "seconds": {
+          "open": 0.068159,
+          "range_read": 0.00252,
+          "table_staging": 45.454534,
+          "query": 0.023181
+        },
+        "counts": {
+          "cells_scanned": 5000010,
+          "cells_decoded": 2000007,
+          "range_reads": 1,
+          "characters_exposed": 429,
+          "estimated_tokens_exposed": 109,
+          "result_cells": 21
+        }
+      }
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 7.311482200049795,
+      "peak_rss_mb": 50.12109375,
+      "context_characters": 49,
+      "estimated_context_tokens": 13,
+      "answer": {
+        "changed_cells": 1,
+        "untouched_parts_verified": 10
+      },
+      "metrics": {
+        "seconds": {
+          "open": 0.049671,
+          "validation": 0.012574,
+          "patching": 6.82368
+        },
+        "counts": {
+          "write_operations": 1
+        }
+      }
+    }
+  ]
+}

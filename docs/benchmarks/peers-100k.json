@@ -1,0 +1,898 @@
+{
+  "rows_per_sheet": 25000,
+  "selected_sheets": 4,
+  "total_rows": 100000,
+  "shared_strings": false,
+  "repeats": 3,
+  "file_bytes": 3238865,
+  "file_sha256": "319006c782fb3c650765a15e635900f52ee19271f25873595d3f79e17d72ee46",
+  "environment": {
+    "python": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+    "versions": {
+      "duckdb": "1.5.5",
+      "lxml": "6.1.1",
+      "openpyxl": "3.1.5",
+      "polars": "1.44.2",
+      "fastexcel": "0.21.0",
+      "pandas": "2.3.1",
+      "python-calamine": "0.8.2"
+    }
+  },
+  "methodology": "Fresh process per trial, fixed randomized order; OS cache not flushed. Cold time includes method imports, load, projection, aggregation, close; excludes fixture creation, temporary-directory cleanup and independent validation. Cached rows exclude preparation/imports and measure a new SheetJet workbook session or Polars Parquet query; setup time is reported separately. RSS sampled every 10ms includes setup/validation and can miss spikes. All methods use the same selected sheets and aggregate inputs; returned answers match independent arithmetic. Cache comparison includes a peer Parquet workflow. Patch tasks edit the small Assumptions sheet, not a large sheet. No native Excel verification. No claim of universal superiority.",
+  "medians": [
+    {
+      "method": "sheetjet",
+      "seconds": 2.0360415000468493,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 115.578125
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 2.9507526999805123,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 47.98828125
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 5.0269013999495655,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 122.6953125
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 0.7794734998606145,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 128.046875
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 0.6806862000375986,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 76.6015625
+    },
+    {
+      "method": "calamine",
+      "seconds": 0.2663753000088036,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 36.6171875
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.11670350003987551,
+      "setup_seconds": 2.2084144002292305,
+      "peak_rss_mb": 120.234375
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.008324499940499663,
+      "setup_seconds": 0.590461399871856,
+      "peak_rss_mb": 85.8828125
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.12628629989922047,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 38.24609375
+    },
+    {
+      "method": "openpyxl_patch",
+      "seconds": 10.8488406999968,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 258.859375
+    }
+  ],
+  "trials": [
+    {
+      "method": "openpyxl_patch",
+      "seconds": 10.8488406999968,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 258.859375,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "calamine",
+      "seconds": 0.2631602000910789,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 35.75390625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 2.9507526999805123,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 47.98828125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "calamine",
+      "seconds": 0.2663753000088036,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 40.56640625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "calamine",
+      "seconds": 0.2845304000657052,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 36.6171875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.10148559999652207,
+      "setup_seconds": 2.2084144002292305,
+      "peak_rss_mb": 120.671875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.007494,
+          "range_read": 0.004642,
+          "persistent_table_read": 0.021851,
+          "query": 0.00267
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      }
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.0113003000151366,
+      "setup_seconds": 0.654171200003475,
+      "peak_rss_mb": 85.96484375,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 2.0360415000468493,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 116.546875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.126156,
+          "range_read": 0.005137,
+          "table_staging": 1.24742,
+          "persistent_table_write": 0.016462,
+          "query": 0.002833
+        },
+        "counts": {
+          "cells_scanned": 500020,
+          "cells_decoded": 200020,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      }
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 3.0244075001683086,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 48.125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "openpyxl_patch",
+      "seconds": 13.785506499931216,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 258.26953125,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 0.7794734998606145,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 128.046875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "openpyxl",
+      "seconds": 2.850845400011167,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 47.8515625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 5.0269013999495655,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 122.28125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.11670350003987551,
+      "setup_seconds": 2.291397999972105,
+      "peak_rss_mb": 120.234375,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.014187,
+          "range_read": 0.00494,
+          "persistent_table_read": 0.021678,
+          "query": 0.005776
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      }
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 1.7637696000747383,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 115.578125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.028566,
+          "range_read": 0.00586,
+          "table_staging": 1.210685,
+          "persistent_table_write": 0.018014,
+          "query": 0.002906
+        },
+        "counts": {
+          "cells_scanned": 500020,
+          "cells_decoded": 200020,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      }
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 0.5877825999632478,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 75.43359375,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.08885459997691214,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 38.35546875,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.040115,
+          "validation": 0.008232,
+          "patching": 0.026054
+        },
+        "counts": {
+          "compressed_bytes_copied": 3237109,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 0.7646352001465857,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 127.94921875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.006196900038048625,
+      "setup_seconds": 0.590461399871856,
+      "peak_rss_mb": 77.9921875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 0.6806862000375986,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 80.50390625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 5.562075899913907,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 122.6953125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet",
+      "seconds": 2.1447115999180824,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 115.4765625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.146915,
+          "range_read": 0.005133,
+          "table_staging": 1.315711,
+          "persistent_table_write": 0.013943,
+          "query": 0.004619
+        },
+        "counts": {
+          "cells_scanned": 500020,
+          "cells_decoded": 200020,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_writes": 4
+        }
+      }
+    },
+    {
+      "method": "sheetjet_cached",
+      "seconds": 0.12829130003228784,
+      "setup_seconds": 1.8693332001566887,
+      "peak_rss_mb": 120.20703125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.007359,
+          "range_read": 0.006385,
+          "persistent_table_read": 0.02644,
+          "query": 0.004036
+        },
+        "counts": {
+          "cells_scanned": 20,
+          "cells_decoded": 20,
+          "range_reads": 4,
+          "characters_exposed": 842,
+          "estimated_tokens_exposed": 214,
+          "result_cells": 28,
+          "persistent_table_hits": 4
+        }
+      }
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.12628629989922047,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 38.24609375,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.076973,
+          "validation": 0.009747,
+          "patching": 0.0237
+        },
+        "counts": {
+          "compressed_bytes_copied": 3237109,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    },
+    {
+      "method": "pandas_calamine",
+      "seconds": 0.8701003000605851,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 128.8671875,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "polars_calamine",
+      "seconds": 0.6946944000665098,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 76.6015625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "pandas_openpyxl",
+      "seconds": 4.880733300000429,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 123.12890625,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "openpyxl_patch",
+      "seconds": 9.106992099899799,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 259.69140625,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "polars_parquet",
+      "seconds": 0.008324499940499663,
+      "setup_seconds": 0.5646530000958592,
+      "peak_rss_mb": 85.8828125,
+      "answer": [
+        [
+          "APAC",
+          12475000
+        ],
+        [
+          "Americas",
+          12525000
+        ],
+        [
+          "EMEA",
+          12500000
+        ],
+        [
+          "Other",
+          12550000
+        ]
+      ],
+      "verified": true,
+      "metrics": {}
+    },
+    {
+      "method": "sheetjet_patch",
+      "seconds": 0.1769135999493301,
+      "setup_seconds": 0.0,
+      "peak_rss_mb": 37.19921875,
+      "answer": 0.12,
+      "verified": true,
+      "metrics": {
+        "seconds": {
+          "open": 0.114134,
+          "validation": 0.013354,
+          "patching": 0.033852
+        },
+        "counts": {
+          "compressed_bytes_copied": 3237109,
+          "members_recompressed": 2,
+          "write_operations": 1
+        }
+      }
+    }
+  ]
+}

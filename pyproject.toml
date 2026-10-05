@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sheetjet"
+version = "0.2.0"
+description = "Range-first Excel inspection, search, analytics and preservation-focused patches"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["lxml>=5", "openpyxl>=3.1", "duckdb>=1.5,<2"]
+keywords = ["excel", "xlsx", "agent", "skill", "duckdb", "spreadsheet"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: OS Independent",
+  "Topic :: Office/Business :: Financial :: Spreadsheet",
+]
+
+[project.urls]
+Repository = "https://github.com/Chris-LongZeyan/SheetJet-dev"
+Issues = "https://github.com/Chris-LongZeyan/SheetJet-dev/issues"
+
+[project.optional-dependencies]
+test = ["pytest>=8", "psutil>=5", "ruff>=0.12"]
+benchmark = ["psutil>=5", "polars>=1.0", "fastexcel>=0.16", "python-calamine>=0.3", "pandas>=2.2", "xlsxwriter>=3.2"]
+
+[project.scripts]
+sheetjet = "sheetjet.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".test-deps", "benchmark-output"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "SIM"]
