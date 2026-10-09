@@ -526,12 +526,25 @@ def prepare(directory, rows=25000):
     print(json.dumps({"manifest": str(directory / TASKS_FILE), "tasks": list(tasks)}))
 
 
+def _registry_entry(value):
+    name, separator, path = value.partition("=")
+    if not separator or not name or not path:
+        raise argparse.ArgumentTypeError("Registry must be skill-name=commands.json")
+    return name, path
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--prepare", type=Path)
     parser.add_argument("--rows", type=int, default=25000)
     parser.add_argument("--run", type=Path)
-    parser.add_argument("--registry", action="append", default=[], help="skill-name=commands.json")
+    parser.add_argument(
+        "--registry",
+        action="append",
+        type=_registry_entry,
+        default=[],
+        help="skill-name=commands.json",
+    )
     parser.add_argument("--output", type=Path, default=Path("benchmark-output/skill-trials"))
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--seed", type=int, default=20261005)
@@ -541,7 +554,7 @@ def main():
     if args.run:
         run(
             args.run,
-            {name: path for name, path in (item.split("=", 1) for item in args.registry)},
+            dict(args.registry),
             args.output,
             args.repeats,
             args.seed,
