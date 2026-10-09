@@ -1,5 +1,10 @@
 # v0.6 reconciliation measurements
 
+These results were recorded for v0.6.0 at commit
+[`4e7c217`](https://github.com/Chris-LongZeyan/SheetJet-dev/commit/4e7c21721729056b9ea0db6cb33e0a6f021ab29d).
+Later maintenance refactors do not change the historical raw report; use that commit
+when reproducing its exact source hashes.
+
 This benchmark measures the new cross-workbook reconciliation workflow. It is a
 cold-versus-cached comparison of SheetJet, **not a peer ranking**. The earlier
 [v0.5 frozen skill comparison](performance-v0.5.md) remains separate evidence.

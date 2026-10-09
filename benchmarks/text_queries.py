@@ -9,9 +9,17 @@ from pathlib import Path
 
 import sheetjet
 from sheetjet import Workbook
+from sheetjet.paths import workspace_path
 
 
-def run(source, output, blocks=5, queries=100):
+def run(source, output, blocks=5, queries=100, workspace=None):
+    workspace = workspace if workspace is not None else Path.cwd()
+    source = workspace_path(source, workspace)
+    output = workspace_path(output, workspace)
+    if source == output or (output.exists() and output.samefile(source)):
+        raise ValueError("Benchmark output must not replace its input")
+    if output.exists():
+        raise FileExistsError("Choose a new benchmark output path")
     if min(blocks, queries) < 1:
         raise ValueError("blocks and queries must be positive")
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -55,5 +63,6 @@ if __name__ == "__main__":
     parser.add_argument("output", type=Path)
     parser.add_argument("--blocks", type=int, default=5)
     parser.add_argument("--queries", type=int, default=100)
+    parser.add_argument("--workspace", type=Path, default=Path.cwd())
     args = parser.parse_args()
-    run(args.source, args.output, args.blocks, args.queries)
+    run(args.source, args.output, args.blocks, args.queries, args.workspace)

@@ -104,6 +104,12 @@ The patch changes authorized XML spans, copies untouched compressed ZIP records,
 and verifies saved cells and package structure. A full audit accompanies the output.
 See the [operation reference](skills/sheetjet/references/operations.md).
 
+CLI paths are confined to the current directory and its descendants. Use
+`sheetjet --workspace /path/to/work inspect book.xlsx` to select a different root;
+relative paths are resolved against that root. Escapes through `..`, absolute paths,
+and existing symlinks are rejected. The Python API remains available for trusted
+callers managing their own file-access policy. See [SECURITY.md](SECURITY.md).
+
 ## Design strengths
 
 | Capability | Contract |
@@ -158,7 +164,8 @@ formula text, or whole-workbook fidelity.
 
 ```console
 python -m pip install -e ".[test]"
-python -m pytest -q
+python -m coverage run -m pytest -q
+python -m coverage report
 python -m ruff check src tests benchmarks examples
 python -m ruff format --check src tests benchmarks examples
 python -m benchmarks.reconciliation --rows 500000 --repeats 3
@@ -168,6 +175,11 @@ Large benchmarks require temporary disk space. Fixture generation and verificati
 are documented separately from timed execution. For library peer comparisons, install
 `.[benchmark]` and run `python -m benchmarks.peers`. See [CONTRIBUTING.md](CONTRIBUTING.md)
 for correctness and evidence requirements.
+
+SonarQube Cloud analyzes maintained sources, tests, examples, and benchmark harnesses.
+The four immutable historical submissions are excluded explicitly to preserve their
+published hashes. CI enforces at least 85% combined statement/branch coverage and
+saves coverage XML; SonarQube automatic analysis does not ingest that report.
 
 MIT licensed. The original design brief is preserved in
 [Excel-skill-instruction.md](Excel-skill-instruction.md).

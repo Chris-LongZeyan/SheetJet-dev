@@ -9,6 +9,16 @@ import sys
 from pathlib import Path
 
 
+def _bind_artifact_python(builder, artifact_python):
+    original = builder.read_text(encoding="utf-8")
+    lines = original.splitlines(keepends=True)
+    bindings = [i for i, line in enumerate(lines) if line.startswith("const python=")]
+    if len(bindings) != 1:
+        raise ValueError("Unexpected frozen runtime binding")
+    lines[bindings[0]] = "const python=" + json.dumps(str(artifact_python.resolve())) + ";\n"
+    builder.write_text("".join(lines), encoding="utf-8", newline="\n")
+
+
 def bind(destination, python, node=None, artifact_python=None):
     if bool(node) != bool(artifact_python):
         raise ValueError("Provide both --node and --artifact-python for the OpenAI submission")
@@ -22,15 +32,7 @@ def bind(destination, python, node=None, artifact_python=None):
                 shutil.copyfile(file, target / file.name)
         builder = target / ("builder.mjs" if peer == "openai" else "builder.py")
         if peer == "openai":
-            original = builder.read_text(encoding="utf-8")
-            lines = original.splitlines(keepends=True)
-            bindings = [i for i, line in enumerate(lines) if line.startswith("const python=")]
-            if len(bindings) != 1:
-                raise ValueError("Unexpected frozen runtime binding")
-            lines[bindings[0]] = (
-                "const python=" + json.dumps(str(artifact_python.resolve())) + ";\n"
-            )
-            builder.write_text("".join(lines), encoding="utf-8", newline="\n")
+            _bind_artifact_python(builder, artifact_python)
         registry = {
             case: {
                 "argv": [

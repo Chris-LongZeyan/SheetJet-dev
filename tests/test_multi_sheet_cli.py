@@ -18,6 +18,8 @@ def test_query_sheets_cli(tmp_path, capsys):
     assert (
         main(
             [
+                "--workspace",
+                str(tmp_path),
                 "--cache-dir",
                 str(tmp_path / "cache"),
                 "query-sheets",

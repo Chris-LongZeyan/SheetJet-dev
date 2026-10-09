@@ -7,12 +7,20 @@ import time
 from pathlib import Path
 
 from .core import Budget, compact
+from .errors import SheetJetError
+from .paths import workspace_path
 from .workbook import Workbook
 
 
-def main(argv=None):
+def _parser():
     parser = argparse.ArgumentParser(
         prog="sheetjet", description="Query Excel locally. Return only bounded evidence."
+    )
+    parser.add_argument(
+        "--workspace",
+        type=Path,
+        default=Path.cwd(),
+        help="Root allowed for all CLI file paths; defaults to the current directory",
     )
     parser.add_argument("--cache-dir")
     parser.add_argument("--max-chars", type=int, default=12000)
@@ -88,38 +96,72 @@ def main(argv=None):
     p.add_argument("--overwrite", action="store_true")
     p.add_argument("--cached-formulas", action="store_true")
     p.add_argument("--no-persistent-cache", action="store_true")
-    args = parser.parse_args(argv)
+    return parser
+
+
+def _validate_paths(args):
+    root = args.workspace.resolve(strict=True)
+    for name in (
+        "file",
+        "before",
+        "after",
+        "output",
+        "cache_dir",
+        "spec",
+        "schema",
+        "ranges",
+        "patch_file",
+    ):
+        value = getattr(args, name, None)
+        if value is not None:
+            setattr(args, name, workspace_path(value, root))
+    if args.cache_dir is None:
+        args.cache_dir = workspace_path(".sheetjet-cache", root)
+
+
+def _run_reconciliation(args, budget):
+    from .reconcile import reconcile
+
+    spec = json.loads(args.spec.read_text(encoding="utf-8"))
+    allowed = {"before_ranges", "after_ranges", "schema", "keys", "compare_columns"}
+    if not isinstance(spec, dict) or not set(spec) <= allowed:
+        raise SheetJetError(
+            "Reconciliation spec must contain only range, schema, key and comparison fields"
+        )
+    start = time.perf_counter()
+    result = reconcile(
+        args.before,
+        args.after,
+        **spec,
+        sample_limit=args.sample_limit,
+        output=args.output,
+        overwrite=args.overwrite,
+        cache_dir=args.cache_dir,
+        budget=budget,
+        allow_cached_formulas=args.cached_formulas,
+        persistent_cache=not args.no_persistent_cache,
+    )
+    print(compact(result, budget))
+    if args.metrics:
+        print(
+            json.dumps(
+                {
+                    "seconds": {"reconciliation": time.perf_counter() - start},
+                    "cache_hits": result["cache_hits"],
+                }
+            ),
+            file=sys.stderr,
+        )
+    return 0
+
+
+def main(argv=None):
+    args = _parser().parse_args(argv)
     try:
+        _validate_paths(args)
         budget = Budget(args.max_cells, args.max_rows, args.max_chars)
         if args.command == "reconcile":
-            from .reconcile import reconcile
-
-            spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
-            start = time.perf_counter()
-            result = reconcile(
-                args.before,
-                args.after,
-                **spec,
-                sample_limit=args.sample_limit,
-                output=args.output,
-                overwrite=args.overwrite,
-                cache_dir=args.cache_dir,
-                budget=budget,
-                allow_cached_formulas=args.cached_formulas,
-                persistent_cache=not args.no_persistent_cache,
-            )
-            print(compact(result, budget))
-            if args.metrics:
-                print(
-                    json.dumps(
-                        {
-                            "seconds": {"reconciliation": time.perf_counter() - start},
-                            "cache_hits": result["cache_hits"],
-                        }
-                    ),
-                    file=sys.stderr,
-                )
-            return 0
+            return _run_reconciliation(args, budget)
         with Workbook(args.file, args.cache_dir, budget) as book:
             cmd = args.command
             if cmd == "inspect":

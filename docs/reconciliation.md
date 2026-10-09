@@ -39,6 +39,8 @@ Standard output contains one bounded JSON summary. `--metrics` writes elapsed ti
 and projection-cache hits to standard error. Omit `--output` for a summary alone.
 `--sample-limit 0` returns counts without example records. `--overwrite` explicitly
 permits replacing an existing export; either input path is always protected.
+From 0.6.1, all CLI paths must lie inside `--workspace` (current directory by default).
+Place the global option before `reconcile` to choose a different trusted root.
 
 ## Python
 
@@ -54,6 +56,18 @@ summary = reconcile(
 )
 print(summary["counts"])
 ```
+
+For reusable execution settings, 0.6.1 also provides an immutable options object:
+
+```python
+from sheetjet import ReconcileOptions, reconcile
+
+options = ReconcileOptions(sample_limit=5, cache_dir=".sheetjet-cache")
+summary = reconcile("before.xlsx", "after.xlsx", **spec, options=options)
+```
+
+The execution arguments below remain accepted individually for v0.6 compatibility.
+Do not combine individual execution settings with `options`; ambiguous settings fail.
 
 | Argument | Meaning |
 |---|---|

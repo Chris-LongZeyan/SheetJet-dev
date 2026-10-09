@@ -11,7 +11,6 @@ import hashlib
 import json
 import os
 import platform
-import random
 import statistics
 import subprocess
 import threading
@@ -26,6 +25,56 @@ from .peers import fixture
 
 NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 Q = "{" + NS + "}"
+CUSTOM_XML_PART = "customXml/item1.xml"
+TASKS_FILE = "tasks.json"
+
+
+def _fingerprint_cell(cell, changed, values, styles, style_cache):
+    if cell.value is None:
+        return
+    sid = cell._style_id
+    if sid not in style_cache:
+        style_cache[sid] = hashlib.sha256(
+            json.dumps(
+                [
+                    str(cell.font),
+                    str(cell.fill),
+                    str(cell.border),
+                    str(cell.alignment),
+                    str(cell.protection),
+                    cell.number_format,
+                ],
+                ensure_ascii=False,
+            ).encode()
+        ).digest()
+    styles.update(cell.coordinate.encode() + b"\0" + style_cache[sid])
+    if cell.coordinate not in changed:
+        value = cell.value
+        if isinstance(value, float) and value.is_integer():
+            value = int(value)
+        values.update(
+            json.dumps(
+                [cell.coordinate, cell.data_type, value],
+                ensure_ascii=False,
+                default=str,
+            ).encode()
+        )
+
+
+def _sheet_fingerprints(sheet, changed):
+    values, styles = hashlib.sha256(), hashlib.sha256()
+    style_cache = {}
+    if sheet.max_row * sheet.max_column > 5_000_000:
+        raise ValueError("Output dimensions exceed the evaluator's fixture limit")
+    for row in sheet:
+        for cell in row:
+            _fingerprint_cell(cell, changed, values, styles, style_cache)
+    return {
+        "values": values.hexdigest(),
+        "styles": styles.hexdigest(),
+        "state": sheet.sheet_state,
+        "shape": [sheet.max_row, sheet.max_column],
+    }
 
 
 def cell_fingerprints(path, changed=None):
@@ -34,50 +83,11 @@ def cell_fingerprints(path, changed=None):
 
     changed = changed or {}
     book = load_workbook(path, read_only=True, data_only=False)
-    result = {}
     try:
-        for sheet in book:
-            values, styles = hashlib.sha256(), hashlib.sha256()
-            style_cache = {}
-            if sheet.max_row * sheet.max_column > 5_000_000:
-                raise ValueError("Output dimensions exceed the evaluator's fixture limit")
-            for row in sheet:
-                for cell in row:
-                    if cell.value is None:
-                        continue
-                    sid = cell._style_id
-                    if sid not in style_cache:
-                        style_cache[sid] = hashlib.sha256(
-                            json.dumps(
-                                [
-                                    str(cell.font),
-                                    str(cell.fill),
-                                    str(cell.border),
-                                    str(cell.alignment),
-                                    str(cell.protection),
-                                    cell.number_format,
-                                ],
-                                ensure_ascii=False,
-                            ).encode()
-                        ).digest()
-                    styles.update(cell.coordinate.encode() + b"\0" + style_cache[sid])
-                    if cell.coordinate not in changed.get(sheet.title, set()):
-                        value = cell.value
-                        if isinstance(value, float) and value.is_integer():
-                            value = int(value)
-                        values.update(
-                            json.dumps(
-                                [cell.coordinate, cell.data_type, value],
-                                ensure_ascii=False,
-                                default=str,
-                            ).encode()
-                        )
-            result[sheet.title] = {
-                "values": values.hexdigest(),
-                "styles": styles.hexdigest(),
-                "state": sheet.sheet_state,
-                "shape": [sheet.max_row, sheet.max_column],
-            }
+        result = {
+            sheet.title: _sheet_fingerprints(sheet, changed.get(sheet.title, set()))
+            for sheet in book
+        }
         result["_sheet_order"] = book.sheetnames
         return result
     finally:
@@ -99,7 +109,7 @@ def expected_changes(case, rows):
     if case == "wide":
         return {"Summary": {"B2": sum(i * 3 for i in range(1, 41) if i % 2 == 0)}}
     if case == "aggregate":
-        totals = {key: 0 for key in ["APAC", "EMEA", "Americas", "Other"]}
+        totals = dict.fromkeys(["APAC", "EMEA", "Americas", "Other"], 0)
         for i in range(1, rows + 1):
             totals[["APAC", "EMEA", "Americas", "Other"][i % 4]] += 2 * (i % 1000 + 1)
         return {"Summary": {f"B{i}": totals[key] for i, key in enumerate(totals, 2)}}
@@ -117,9 +127,99 @@ def cached_assumption(path):
         book.close()
 
 
-def judge(case, source, output, result_path, rows, reference=None):
+def _judge_created(output, checks):
     from openpyxl import load_workbook
 
+    book = load_workbook(output)
+    try:
+        checks["sheet_names"] = book.sheetnames == ["Budget"]
+        sheet = book["Budget"]
+        expected = {
+            "A1": "Month",
+            "B1": "Revenue",
+            "C1": "Cost",
+            "D1": "Profit",
+            "A5": "Total",
+        }
+        for rn, row in enumerate([["Jan", 100, 60], ["Feb", 120, 70], ["Mar", 90, 50]], 2):
+            expected.update({f"{col}{rn}": value for col, value in zip("ABC", row, strict=True)})
+            expected[f"D{rn}"] = f"=B{rn}-C{rn}"
+        expected.update({f"{col}5": f"=SUM({col}2:{col}4)" for col in "BCD"})
+        checks["values_and_formulas"] = all(
+            sheet[cell].value == value for cell, value in expected.items()
+        )
+        checks["bold_headers"] = all(sheet[f"{col}1"].font.bold for col in "ABCD")
+        checks["number_formats"] = all(
+            ".00" in sheet[f"{col}{rn}"].number_format for col in "BCD" for rn in range(2, 6)
+        )
+        checks["freeze_panes"] = sheet.freeze_panes == "A2"
+        checks["column_widths"] = all(sheet.column_dimensions[col].width >= 10 for col in "ABCD")
+        from openpyxl.chart import BarChart
+
+        charts = [
+            chart for chart in sheet._charts if isinstance(chart, BarChart) and chart.type == "col"
+        ]
+        checks["column_chart"] = bool(charts)
+        references = [
+            series.val.numRef.f.replace("$", "")
+            for chart in charts
+            for series in chart.series
+            if series.val and series.val.numRef
+        ]
+        checks["chart_series"] = len(references) == 2 and all(
+            any(ref.endswith(f"!{col}2:{col}4") for ref in references) for col in "BC"
+        )
+    finally:
+        book.close()
+
+
+def _judge_existing(case, source, output, rows, reference, checks, report):
+    from openpyxl import load_workbook
+
+    changed = expected_changes(case, rows)
+    original = reference or cell_fingerprints(source, changed)
+    actual = cell_fingerprints(output, changed)
+    checks["unchanged_values_formulas_structure_styles"] = actual == original
+    if not checks["unchanged_values_formulas_structure_styles"]:
+        report["changed_fingerprint_fields"] = {
+            name: [k for k in original[name] if original[name][k] != actual.get(name, {}).get(k)]
+            for name in original
+            if isinstance(original[name], dict) and original[name] != actual.get(name)
+        }
+    book = load_workbook(output, read_only=True, data_only=False)
+    try:
+        checks["requested_values"] = all(
+            book[sheet][cell].value == value
+            for sheet, cells in changed.items()
+            for cell, value in cells.items()
+        )
+    finally:
+        book.close()
+    if case in {"edit", "aggregate"}:
+        checks["existing_formula_cache_preserved"] = cached_assumption(source) == cached_assumption(
+            output
+        )
+    before, after = part_hashes(source), part_hashes(output)
+    report["byte_identical_source_parts"] = sum(
+        after.get(name) == digest for name, digest in before.items()
+    )
+    report["source_part_count"] = len(before)
+    report["changed_or_missing_parts"] = [
+        name for name, digest in before.items() if after.get(name) != digest
+    ]
+    if CUSTOM_XML_PART in before:
+        checks["custom_xml_payload"] = after.get(CUSTOM_XML_PART) == before[CUSTOM_XML_PART]
+        with ZipFile(output) as archive:
+            links = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+            checks["custom_xml_relationship"] = any(
+                link.get("Type", "").endswith("/customXml")
+                and link.get("Target", "").replace("\\", "/")
+                in {"../customXml/item1.xml", "/customXml/item1.xml"}
+                for link in links
+            )
+
+
+def judge(case, source, output, result_path, rows, reference=None):
     checks = {}
     report = {"checks": checks}
     try:
@@ -128,103 +228,9 @@ def judge(case, source, output, result_path, rows, reference=None):
         checks["bounded_json"] = len(raw) <= 6000
         report["result_bytes"] = len(raw)
         if case == "create":
-            book = load_workbook(output)
-            try:
-                checks["sheet_names"] = book.sheetnames == ["Budget"]
-                sheet = book["Budget"]
-                expected = {
-                    "A1": "Month",
-                    "B1": "Revenue",
-                    "C1": "Cost",
-                    "D1": "Profit",
-                    "A5": "Total",
-                }
-                for rn, row in enumerate([["Jan", 100, 60], ["Feb", 120, 70], ["Mar", 90, 50]], 2):
-                    expected.update(
-                        {f"{col}{rn}": value for col, value in zip("ABC", row, strict=True)}
-                    )
-                    expected[f"D{rn}"] = f"=B{rn}-C{rn}"
-                expected.update({f"{col}5": f"=SUM({col}2:{col}4)" for col in "BCD"})
-                checks["values_and_formulas"] = all(
-                    sheet[cell].value == value for cell, value in expected.items()
-                )
-                checks["bold_headers"] = all(sheet[f"{col}1"].font.bold for col in "ABCD")
-                checks["number_formats"] = all(
-                    ".00" in sheet[f"{col}{rn}"].number_format
-                    for col in "BCD"
-                    for rn in range(2, 6)
-                )
-                checks["freeze_panes"] = sheet.freeze_panes == "A2"
-                checks["column_widths"] = all(
-                    sheet.column_dimensions[col].width >= 10 for col in "ABCD"
-                )
-                from openpyxl.chart import BarChart
-
-                charts = [
-                    chart
-                    for chart in sheet._charts
-                    if isinstance(chart, BarChart) and chart.type == "col"
-                ]
-                checks["column_chart"] = bool(charts)
-                references = [
-                    series.val.numRef.f.replace("$", "")
-                    for chart in charts
-                    for series in chart.series
-                    if series.val and series.val.numRef
-                ]
-                checks["chart_series"] = len(references) == 2 and all(
-                    any(ref.endswith(f"!{col}2:{col}4") for ref in references) for col in "BC"
-                )
-            finally:
-                book.close()
+            _judge_created(output, checks)
         else:
-            changed = expected_changes(case, rows)
-            original = reference or cell_fingerprints(source, changed)
-            actual = cell_fingerprints(output, changed)
-            checks["unchanged_values_formulas_structure_styles"] = actual == original
-            if not checks["unchanged_values_formulas_structure_styles"]:
-                report["changed_fingerprint_fields"] = {
-                    name: [
-                        k
-                        for k in original[name]
-                        if original[name][k] != actual.get(name, {}).get(k)
-                    ]
-                    for name in original
-                    if isinstance(original[name], dict) and original[name] != actual.get(name)
-                }
-            book = load_workbook(output, read_only=True, data_only=False)
-            try:
-                checks["requested_values"] = all(
-                    book[sheet][cell].value == value
-                    for sheet, cells in changed.items()
-                    for cell, value in cells.items()
-                )
-            finally:
-                book.close()
-            if case in {"edit", "aggregate"}:
-                checks["existing_formula_cache_preserved"] = cached_assumption(
-                    source
-                ) == cached_assumption(output)
-            before, after = part_hashes(source), part_hashes(output)
-            report["byte_identical_source_parts"] = sum(
-                after.get(name) == digest for name, digest in before.items()
-            )
-            report["source_part_count"] = len(before)
-            report["changed_or_missing_parts"] = [
-                name for name, digest in before.items() if after.get(name) != digest
-            ]
-            if "customXml/item1.xml" in before:
-                checks["custom_xml_payload"] = (
-                    after.get("customXml/item1.xml") == before["customXml/item1.xml"]
-                )
-                with ZipFile(output) as archive:
-                    links = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
-                    checks["custom_xml_relationship"] = any(
-                        link.get("Type", "").endswith("/customXml")
-                        and link.get("Target", "").replace("\\", "/")
-                        in {"../customXml/item1.xml", "/customXml/item1.xml"}
-                        for link in links
-                    )
+            _judge_existing(case, source, output, rows, reference, checks, report)
         report["passed"] = all(checks.values())
     except Exception as exc:
         report.update(passed=False, error=f"{type(exc).__name__}: {exc}")
@@ -302,7 +308,7 @@ def run_trial(command, case, spec, directory, rows, reference):
 def run(directory, registries, output, repeats=3, seed=20261005):
     if repeats < 1:
         raise ValueError("repeats must be positive")
-    manifest = json.loads((directory / "tasks.json").read_text(encoding="utf-8"))
+    manifest = json.loads((directory / TASKS_FILE).read_text(encoding="utf-8"))
     tasks = manifest["tasks"]
     inputs = {Path(spec["input"]) for spec in tasks.values() if spec["input"]}
 
@@ -342,7 +348,8 @@ def run(directory, registries, output, repeats=3, seed=20261005):
     jobs = [
         (name, case, trial) for name in submissions for case in tasks for trial in range(repeats)
     ]
-    random.Random(seed).shuffle(jobs)
+    # A reproducible permutation for ordering trials, not secret generation.
+    jobs.sort(key=lambda job: hashlib.sha256(json.dumps([seed, *job]).encode()).digest())
     trials = []
     output.mkdir(parents=True, exist_ok=True)
     for name, case, trial in jobs:
@@ -472,7 +479,7 @@ def prepare(directory, rows=25000):
             dst.writestr(info, raw)
         dst.writestr("xl/worksheets/sheet7.xml", summary)
         dst.writestr(
-            "customXml/item1.xml",
+            CUSTOM_XML_PART,
             '<meta xmlns="urn:sheetjet:evaluation"><record>retain-this-metadata</record></meta>',
         )
     wide = inputs / "wide.xlsx"
@@ -515,8 +522,8 @@ def prepare(directory, rows=25000):
         "rows_per_period": rows,
         "input_hashes": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [large, wide]},
     }
-    (directory / "tasks.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print(json.dumps({"manifest": str(directory / "tasks.json"), "tasks": list(tasks)}))
+    (directory / TASKS_FILE).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(json.dumps({"manifest": str(directory / TASKS_FILE), "tasks": list(tasks)}))
 
 
 def main():
@@ -534,7 +541,7 @@ def main():
     if args.run:
         run(
             args.run,
-            dict(item.split("=", 1) for item in args.registry),
+            {name: path for name, path in (item.split("=", 1) for item in args.registry)},
             args.output,
             args.repeats,
             args.seed,

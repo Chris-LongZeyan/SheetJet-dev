@@ -4,7 +4,7 @@ import json
 import pytest
 from openpyxl import Workbook as Excel
 
-from sheetjet import BudgetExceeded, SheetJetError, reconcile
+from sheetjet import BudgetExceeded, ReconcileOptions, SheetJetError, reconcile
 from sheetjet.cli import main
 from sheetjet.core import Budget
 
@@ -67,11 +67,13 @@ def test_reconcile_reordered_multisheet_records_and_complete_export(pair, tmp_pa
     assert [record["key"]["ID"] for record in records] == [1, 4, 8]
     assert records[0]["before"]["values"]["Amount"] == "1.1000"
     assert records[0]["after"]["values"]["Amount"] == "1.1100"
-    assert records[1]["after"] is None and records[2]["before"] is None
+    assert records[1]["after"] is None
+    assert records[2]["before"] is None
     assert hashes == [hashlib.sha256(p.read_bytes()).hexdigest() for p in (before, after)]
     again = reconcile(before, after, **spec, sample_limit=0, cache_dir=tmp_path / "cache")
     assert again["cache_hits"] == {"before": 2, "after": 2}
-    assert again["sample"] == [] and again["counts"] == result["counts"]
+    assert again["sample"] == []
+    assert again["counts"] == result["counts"]
 
 
 @pytest.mark.parametrize("rows,message", [([[1, 2], [1, 3]], "duplicate"), ([[None, 2]], "null")])
@@ -138,12 +140,13 @@ def test_composite_keys_null_changes_and_ignored_formulas(tmp_path):
 def test_budget_failure_does_not_publish_and_existing_output_is_protected(pair, tmp_path):
     before, after, spec = pair
     output = tmp_path / "changes.jsonl"
+    budget = Budget(max_chars=100)
     with pytest.raises(BudgetExceeded):
         reconcile(
             before,
             after,
             **spec,
-            budget=Budget(max_chars=100),
+            budget=budget,
             output=output,
             cache_dir=tmp_path / "cache",
         )
@@ -183,6 +186,8 @@ def test_reconcile_cli(pair, tmp_path, capsys):
     assert (
         main(
             [
+                "--workspace",
+                str(tmp_path),
                 "--cache-dir",
                 str(tmp_path / "cache"),
                 "reconcile",
@@ -197,7 +202,8 @@ def test_reconcile_cli(pair, tmp_path, capsys):
         == 0
     )
     result = json.loads(capsys.readouterr().out)
-    assert result["counts"]["changed"] == 1 and result["sample"] == []
+    assert result["counts"]["changed"] == 1
+    assert result["sample"] == []
 
 
 def test_selected_formula_policy_and_missing_cache(tmp_path):
@@ -334,3 +340,18 @@ def test_invalid_column_specification_is_rejected(pair, override):
     before, after, spec = pair
     with pytest.raises(SheetJetError):
         reconcile(before, after, **(spec | override))
+
+
+def test_options_preserve_legacy_behavior_and_reject_ambiguous_settings(pair, tmp_path):
+    before, after, spec = pair
+    options = ReconcileOptions(sample_limit=2, cache_dir=tmp_path / "cache")
+    result = reconcile(before, after, **spec, options=options)
+    legacy = reconcile(before, after, **spec, sample_limit=2, cache_dir=tmp_path / "cache")
+    assert result["counts"] == legacy["counts"]
+    assert result["sample"] == legacy["sample"]
+    with pytest.raises(SheetJetError, match="not both"):
+        reconcile(before, after, **spec, options=options, sample_limit=0)
+    with pytest.raises(SheetJetError, match="must be ReconcileOptions"):
+        reconcile(before, after, **spec, options={})
+    with pytest.raises(TypeError, match="unknown"):
+        reconcile(before, after, **spec, unknown=True)

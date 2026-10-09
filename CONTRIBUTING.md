@@ -4,6 +4,14 @@ Install Python 3.11+ and run `python -m pip install -e ".[test]"`, then
 `python -m pytest -q`. No API keys or Excel installation are needed for unit tests.
 CI runs Windows and Linux. Keep synthetic fixtures generated in temporary directories.
 
+Run `python -m coverage run -m pytest -q` followed by `python -m coverage report`
+for the same 85% combined statement/branch coverage floor enforced by CI. XML reports
+are saved as CI artifacts. SonarQube's automatic analysis is separate and cannot
+import coverage; moving to CI-based Sonar analysis requires a deliberate migration.
+Keep its quality gate and rules intact. The only explicit analysis exclusions are
+the four byte-frozen historical submissions; source, tests, examples, and maintained
+benchmark harnesses remain analyzed. See [SECURITY.md](SECURITY.md) for their scope.
+
 Good contributions include a small failing workbook fixture, preservation checks
 for an Excel feature, query-planning improvements, and reproducible performance work.
 Use synthetic data or files you can legally redistribute. Do not upload confidential

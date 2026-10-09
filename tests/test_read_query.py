@@ -112,7 +112,35 @@ def test_read_table_and_profile(model, cache):
 def test_cli_bounded_output(model, cache, capsys):
     from sheetjet.cli import main
 
-    assert main(["--cache-dir", str(cache), "read", str(model), "Assumptions", "A1:B2"]) == 0
+    assert (
+        main(
+            [
+                "--workspace",
+                str(model.parent),
+                "--cache-dir",
+                str(cache),
+                "read",
+                str(model),
+                "Assumptions",
+                "A1:B2",
+            ]
+        )
+        == 0
+    )
     assert json.loads(capsys.readouterr().out)["rows"][0][1] == 0.08
-    assert main(["--cache-dir", str(cache), "read", str(model), "Assumptions", "A1:ZZ10000"]) == 2
+    assert (
+        main(
+            [
+                "--workspace",
+                str(model.parent),
+                "--cache-dir",
+                str(cache),
+                "read",
+                str(model),
+                "Assumptions",
+                "A1:ZZ10000",
+            ]
+        )
+        == 2
+    )
     assert json.loads(capsys.readouterr().err)["error"] == "BudgetExceeded"

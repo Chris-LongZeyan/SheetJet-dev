@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sheetjet"
-version = "0.6.0"
+version = "0.6.1"
 description = "Local Excel analytics, key-based reconciliation and preservation-focused patches"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,7 +24,7 @@ Repository = "https://github.com/Chris-LongZeyan/SheetJet-dev"
 Issues = "https://github.com/Chris-LongZeyan/SheetJet-dev/issues"
 
 [project.optional-dependencies]
-test = ["pytest>=8", "psutil>=5", "ruff>=0.12"]
+test = ["pytest>=8", "psutil>=5", "ruff>=0.12", "coverage>=7"]
 benchmark = ["psutil>=5", "polars>=1.0", "fastexcel>=0.16", "python-calamine>=0.3", "pandas>=2.2", "xlsxwriter>=3.2"]
 
 [project.scripts]
@@ -36,6 +36,15 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["sheetjet"]
+relative_files = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
 
 [tool.ruff]
 line-length = 100

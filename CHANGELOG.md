@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.1
+
+- Confine all CLI paths to an explicit workspace (current directory by default),
+  rejecting traversal, existing symlink escapes, Windows device names, and alternate
+  streams. **CLI migration:** select `--workspace` when files live elsewhere.
+- Validate reconciliation spec fields before execution. Apply the same workspace
+  checks to the repeated-text-query benchmark and protect its existing outputs.
+- Split reconciliation, CLI setup, fixture generation, and benchmark judging into
+  focused functions. Add `ReconcileOptions`; existing Python keyword settings remain
+  supported and cannot be mixed with an options object.
+- Add traversal and compatibility regression tests, branch coverage in CI, and
+  SonarQube automatic-analysis scope with an explicit Python version.
+- Preserve four historical benchmark submissions byte-for-byte and exclude only
+  those archived implementations from analysis. Maintained harnesses remain scanned.
+
 ## 0.6.0
 
 - Add `sheetjet.reconcile` and the `sheetjet reconcile` CLI for matching records

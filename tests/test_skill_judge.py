@@ -38,4 +38,5 @@ def test_judge_checks_saved_values_styles_and_unrequested_cells(tmp_path):
 
 def test_judge_reports_missing_output_instead_of_crashing(tmp_path):
     result = judge("create", None, tmp_path / "missing.xlsx", tmp_path / "missing.json", 10)
-    assert not result["passed"] and "FileNotFoundError" in result["error"]
+    assert not result["passed"]
+    assert "FileNotFoundError" in result["error"]
