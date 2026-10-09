@@ -43,6 +43,7 @@ class QueryEngine:
         self.sources = {}
         self.readonly = False
         self.materialized = set()
+        self._text_query = None
 
     def _write_connection(self):
         if self.readonly:
@@ -51,6 +52,7 @@ class QueryEngine:
             self.db.close()
             self.db = duckdb.connect(self.path, config=self.config)
             self.readonly = False
+            self._text_query = None
 
     @staticmethod
     def _stamp(path):
@@ -338,6 +340,35 @@ class QueryEngine:
                     "Projection cache changed during this session; reopen before continuing"
                 )
 
+    def _execute(self, sql, params):
+        # SQL PREPARE/EXECUTE binds text without Python's optional dataframe
+        # conversion stack. Never substitute placeholders in the user's SQL.
+        # Keep other types, named parameters, and NUL strings on the DB-API path.
+        if (
+            isinstance(params, (list, tuple))
+            and params
+            and all(type(value) is str and "\0" not in value for value in params)
+        ):
+            if self._text_query != sql:
+                if self._text_query is not None:
+                    self.db.execute("DEALLOCATE _sheetjet_text_query")
+                    self._text_query = None
+                self.db.execute(f"PREPARE _sheetjet_text_query AS {sql}")
+                self._text_query = sql
+            try:
+                result = self.db.execute(
+                    "EXECUTE _sheetjet_text_query(" + ",".join(map(_literal, params)) + ")"
+                )
+                return [d[0] for d in result.description], result.fetchall()
+            except Exception:
+                try:
+                    self.db.execute("DEALLOCATE _sheetjet_text_query")
+                finally:
+                    self._text_query = None
+                raise
+        result = self.db.execute(sql, params or [])
+        return [d[0] for d in result.description], result.fetchall()
+
     def query(self, sql, params=None, budget: Budget | None = None):
         self.w.package.check()
         budget = budget or self.w.budget
@@ -351,6 +382,7 @@ class QueryEngine:
         # Disabling external access also prevents SQL from reading arbitrary local files or installing extensions.
         if not self.readonly:
             self.db.close()
+            self._text_query = None
             try:
                 self.db = duckdb.connect(
                     self.path,
@@ -372,9 +404,7 @@ class QueryEngine:
             bounded_sql = (
                 f"SELECT * FROM ({sql.rstrip().rstrip(';')}) AS answer LIMIT {budget.max_rows + 1}"
             )
-            result = self.db.execute(bounded_sql, params or [])
-            columns = [d[0] for d in result.description]
-            rows = result.fetchall()
+            columns, rows = self._execute(bounded_sql, params)
         if len(rows) > budget.max_rows or len(rows) * len(columns) > budget.max_cells:
             raise BudgetExceeded(
                 "Query output exceeds response budget; aggregate or use a smaller LIMIT"

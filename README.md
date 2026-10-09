@@ -16,19 +16,20 @@ library. No LLM API key, embeddings service, or Excel installation is required.
 1 assumption edit     → XML patch → untouched workbook parts preserved
 ```
 
-**New in v0.4:** project from 2,500-column sheets without exposing their headers or
-raising the response budget, and avoid optional dataframe imports for queries
-without user parameters. Includes independent same-model trials using the official
-Anthropic XLSX and installed OpenAI Spreadsheets skills: **72 successful executions
-across two rounds**, with frozen builders, independent saved-file checks, and raw results.
+**New in v0.5:** the previously losing wide-sheet task now beats the frozen Anthropic
+skill submission: **0.633 s versus 0.883 s**. Native prepared text queries avoid
+optional dataframe imports and reuse one query plan per session. Wide-sheet time
+fell **41.5%**, and peak memory fell **49.3%**, against a fresh v0.4 baseline.
 
-In the final round, SheetJet's single-cell edit was **3.53× faster than the Anthropic
-submission and 7.41× faster than the OpenAI submission**. Selected multi-sheet
-aggregation plus writeback was **1.53× and 2.70× faster**. These are three-trial
-medians for specific generated workflows; Anthropic won the small wide-sheet task
-and used less query memory. [Full skill comparison and reproduction](docs/skill-workflows-v0.4.md).
+In five fresh-process trials per task, v0.5 beat the Anthropic submission on all three
+existing-workbook workflows: **1.39× on wide projection, 2.55× on a single-cell edit,
+and 1.55× on multi-sheet aggregation with writeback**. All 60 final executions passed
+independent saved-file checks. Anthropic retains lower query memory and a faster
+new-workbook creation median. [Results, frozen builders, and reproduction](docs/performance-v0.5.md).
+The [earlier three-skill comparison](docs/skill-workflows-v0.4.md) includes the installed
+OpenAI Spreadsheets skill; it has not been rerun for v0.5.
 
-In the current four-sheet, 100k-row comparison, changing one assumption took a median
+In the earlier four-sheet, 100k-row library comparison, changing one assumption took a median
 **0.105 s and 38.5 MiB peak RSS**, versus **7.247 s and 258.8 MiB** for openpyxl's
 load/save path. Both use three synthetic trials and edit a small assumptions sheet.
 At one million rows, cache reopening plus aggregation fell from **0.311 s to 0.124 s**

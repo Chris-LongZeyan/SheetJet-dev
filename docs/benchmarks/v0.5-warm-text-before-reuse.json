@@ -1,0 +1,15 @@
+{
+  "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+  "query_engine_sha256": "8ddd812beadabf6d1bed6f7c7f64c5843991d344c44a792273fae1249efe496a",
+  "open_load_first_query_seconds": 0.2724770000204444,
+  "queries_per_block": 100,
+  "milliseconds_per_query_by_block": [
+    4.036038999911398,
+    3.667663000524044,
+    4.4026420009322464,
+    5.371157999616116,
+    5.557528000790626
+  ],
+  "median_milliseconds_per_query": 4.4026420009322464,
+  "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes."
+}

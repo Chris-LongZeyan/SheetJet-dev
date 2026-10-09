@@ -1,0 +1,118 @@
+{
+  "execution_order": [
+    "v04-1",
+    "v05-1",
+    "v05-2",
+    "v04-2",
+    "v04-3",
+    "v05-3"
+  ],
+  "median_process_medians_ms": {
+    "v04": 3.092835999559611,
+    "v05": 3.164264999795705
+  },
+  "trials": [
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "c6c5f6f0540b8aa91448606ef0115bbfd557f929af6d8308e12ce5ee99018691",
+      "open_load_first_query_seconds": 0.9922353001311421,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        3.221132999751717,
+        2.532460999209434,
+        3.917992999777198,
+        3.092835999559611,
+        2.9422069992870092
+      ],
+      "median_milliseconds_per_query": 3.092835999559611,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v04",
+      "process": "1"
+    },
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "a25758975c18b3746c55023cf4cd30bb55a6a7843a77a3728570a2a9a23a37e5",
+      "open_load_first_query_seconds": 0.327801400097087,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        2.8318080003373325,
+        3.3657839987426996,
+        3.164264999795705,
+        2.3003909992985427,
+        4.073421000503004
+      ],
+      "median_milliseconds_per_query": 3.164264999795705,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v05",
+      "process": "1"
+    },
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "a25758975c18b3746c55023cf4cd30bb55a6a7843a77a3728570a2a9a23a37e5",
+      "open_load_first_query_seconds": 0.3087313000578433,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        3.388827000744641,
+        2.2340140002779663,
+        3.3979050000198185,
+        3.2844959991052747,
+        3.283894001506269
+      ],
+      "median_milliseconds_per_query": 3.2844959991052747,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v05",
+      "process": "2"
+    },
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "c6c5f6f0540b8aa91448606ef0115bbfd557f929af6d8308e12ce5ee99018691",
+      "open_load_first_query_seconds": 0.8047110000625253,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        3.6823710007593036,
+        3.461980998981744,
+        2.9277559998445213,
+        3.2666949997656047,
+        2.818930000066757
+      ],
+      "median_milliseconds_per_query": 3.2666949997656047,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v04",
+      "process": "2"
+    },
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "c6c5f6f0540b8aa91448606ef0115bbfd557f929af6d8308e12ce5ee99018691",
+      "open_load_first_query_seconds": 0.6290711001493037,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        2.415861999616027,
+        2.1725130011327565,
+        2.3056519986130297,
+        2.22962100058794,
+        2.412579001393169
+      ],
+      "median_milliseconds_per_query": 2.3056519986130297,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v04",
+      "process": "3"
+    },
+    {
+      "input_sha256": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625",
+      "query_engine_sha256": "a25758975c18b3746c55023cf4cd30bb55a6a7843a77a3728570a2a9a23a37e5",
+      "open_load_first_query_seconds": 0.2602406998630613,
+      "queries_per_block": 100,
+      "milliseconds_per_query_by_block": [
+        2.3308959999121726,
+        2.4225590005517006,
+        3.1983830011449754,
+        2.9172739991918206,
+        3.166183999273926
+      ],
+      "median_milliseconds_per_query": 2.9172739991918206,
+      "scope": "One process, no persistent data cache; repeated parameterized queries after startup, no output editing. Blocks are not independent processes.",
+      "configuration": "v05",
+      "process": "3"
+    }
+  ]
+}

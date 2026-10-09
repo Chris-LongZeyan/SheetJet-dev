@@ -299,7 +299,7 @@ def run_trial(command, case, spec, directory, rows, reference):
     }
 
 
-def run(directory, registries, output, repeats=3):
+def run(directory, registries, output, repeats=3, seed=20261005):
     if repeats < 1:
         raise ValueError("repeats must be positive")
     manifest = json.loads((directory / "tasks.json").read_text(encoding="utf-8"))
@@ -342,7 +342,7 @@ def run(directory, registries, output, repeats=3):
     jobs = [
         (name, case, trial) for name in submissions for case in tasks for trial in range(repeats)
     ]
-    random.Random(20261005).shuffle(jobs)
+    random.Random(seed).shuffle(jobs)
     trials = []
     output.mkdir(parents=True, exist_ok=True)
     for name, case, trial in jobs:
@@ -374,6 +374,8 @@ def run(directory, registries, output, repeats=3):
                     "passed": sum(t["verdict"]["passed"] for t in selected),
                     "trials": len(selected),
                     "seconds": statistics.median(t["seconds"] for t in selected),
+                    "seconds_min": min(t["seconds"] for t in selected),
+                    "seconds_max": max(t["seconds"] for t in selected),
                     "peak_process_tree_rss_mib": statistics.median(
                         t["peak_process_tree_rss_mib"] for t in selected
                     ),
@@ -388,6 +390,7 @@ def run(directory, registries, output, repeats=3):
         "input_hashes": manifest["input_hashes"],
         "rows_per_period": manifest["rows_per_period"],
         "repeats": repeats,
+        "shuffle_seed": seed,
         "agent_generations_per_skill": 1,
         "actual_model_tokens_measured": False,
         "methodology": "Independent same-model agents authored each submission from its assigned skill, then builders were frozen. Timings are fresh-process execution of frozen builders, not model reasoning time. Serial fixed-randomized trials; OS caches not flushed. Process-tree RSS sampled every 10ms may double-count shared pages and miss peaks. Independent openpyxl artifact judging is outside timed execution. Skill breadth and agent success-rate generalization are not established by one generation per skill. No universal skill ranking or token-saving claim.",
@@ -524,11 +527,18 @@ def main():
     parser.add_argument("--registry", action="append", default=[], help="skill-name=commands.json")
     parser.add_argument("--output", type=Path, default=Path("benchmark-output/skill-trials"))
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=20261005)
     args = parser.parse_args()
     if args.prepare:
         prepare(args.prepare, args.rows)
     if args.run:
-        run(args.run, dict(item.split("=", 1) for item in args.registry), args.output, args.repeats)
+        run(
+            args.run,
+            dict(item.split("=", 1) for item in args.registry),
+            args.output,
+            args.repeats,
+            args.seed,
+        )
 
 
 if __name__ == "__main__":

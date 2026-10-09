@@ -31,12 +31,87 @@ with Workbook(sys.argv[1], sys.argv[2]) as book:
     assert engine.query('SELECT sum(Revenue) FROM Sales')['rows'] == [[51500]]
     engine.materialize('Sales')
     assert engine.query('SELECT count(*) FROM Sales')['rows'] == [[100]]
+    assert engine.query('SELECT ? AS value', ['APAC'])["rows"] == [['APAC']]
     assert 'pandas' not in sys.modules
 """
     result = subprocess.run(
         [sys.executable, "-c", script, str(model), str(cache)], capture_output=True, text=True
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["", "APAC", "O'Brien", "日本語 😀", "a\\b\n\t? $1", "\\'); DROP TABLE Sales; --", "nul\0text"],
+)
+def test_text_parameters_match_native_binding(model, cache, value):
+    import duckdb
+
+    sql = "SELECT ? AS value, '?' AS literal, length(?) AS size"
+    with duckdb.connect() as native, Workbook(model, cache) as book:
+        expected = [list(row) for row in native.execute(sql, [value, value]).fetchall()]
+        assert book.query_engine.query(sql, [value, value])["rows"] == expected
+        assert book.query_engine.query("SELECT $2, $1", [value, "second"])["rows"] == [
+            ["second", value]
+        ]
+
+
+def test_text_parameter_errors_leave_connection_reusable(model, cache):
+    import duckdb
+
+    with Workbook(model, cache) as book:
+        engine = book.query_engine
+        for sql, params in [("SELECT ?, ?", ["only one"]), ("SELECT ?::INTEGER", ["invalid"])]:
+            with pytest.raises(duckdb.Error):
+                engine.query(sql, params)
+            assert engine.query("SELECT ?", ["recovered"])["rows"] == [["recovered"]]
+        assert engine.query("SELECT $region", {"region": "named"})["rows"] == [["named"]]
+        assert engine.query("SELECT ?, ?", ["mixed", 42])["rows"] == [["mixed", 42]]
+
+
+@pytest.mark.parametrize("value", ["2", "invalid"])
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT ? + 1",
+        "SELECT coalesce(?,1)",
+        "SELECT typeof(?)",
+        "SELECT ? = 2",
+        "SELECT greatest(?,2)",
+    ],
+)
+def test_text_parameter_coercion_matches_native_binding(model, cache, sql, value):
+    import duckdb
+
+    with duckdb.connect() as native, Workbook(model, cache) as book:
+        try:
+            expected = [list(row) for row in native.execute(sql, [value]).fetchall()]
+        except duckdb.Error as exc:
+            with pytest.raises(type(exc)):
+                book.query_engine.query(sql, [value])
+        else:
+            assert book.query_engine.query(sql, [value])["rows"] == expected
+
+
+def test_prepared_text_query_rebinds_and_survives_relation_changes(model, cache):
+    with Workbook(model, cache) as book:
+        engine = book.query_engine
+        args = {
+            "columns": ["Region", "Revenue"],
+            "schema": {"Region": "VARCHAR", "Revenue": "BIGINT"},
+        }
+        engine.load("Sales", **args)
+        sql = 'SELECT SUM("Revenue") FROM Sales WHERE "Region" = ?'
+        for region, total in [("APAC", 25500), ("EMEA", 26000), ("APAC", 25500)]:
+            assert engine.query(sql, [region])["rows"] == [[total]]
+        engine.materialize("Sales")
+        assert engine.query(sql, ["EMEA"])["rows"] == [[26000]]
+        # Staging another relation reopens the writable connection, then query
+        # must prepare again on the new restricted connection.
+        engine.load("Other", sheet="Transactions", ref="A1:E101", **args)
+        assert engine.query(sql, ["APAC"])["rows"] == [[25500]]
+        assert engine.query("SELECT ?", ["different query"])["rows"] == [["different query"]]
+        assert engine.query(sql, ["EMEA"])["rows"] == [[26000]]
 
 
 def test_lazy_cache_views_and_query_session_restrictions(model, cache, tmp_path):

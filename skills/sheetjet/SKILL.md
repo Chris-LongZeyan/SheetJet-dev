@@ -43,6 +43,9 @@ Pagination and LIMIT return subsets; state that scope when interpreting them.
 
 Keep a Python `Workbook` session open for related operations. The session caches
 ranges and reuses a restricted SQL connection. Cache loads query Parquet lazily.
+Pass query filters as parameters. Positional text filters use native prepared
+statements without loading the optional dataframe stack; keep values out of SQL text.
+Related text-filter queries reuse one prepared plan within the session.
 For repeated scans of the same loaded relation, `query_engine.materialize(name)`
 pays for one session-local table copy; avoid that extra copy for one-off queries.
 Projected, typed Parquet caches survive sessions and reuse

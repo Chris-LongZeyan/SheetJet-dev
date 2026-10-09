@@ -1,0 +1,1810 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "evaluator_python": "3.13.7",
+  "evaluator_dependency_versions": {
+    "duckdb": "1.5.5",
+    "openpyxl": "3.1.5",
+    "lxml": "6.1.1",
+    "psutil": "7.2.2",
+    "xlsxwriter": "3.2.9",
+    "pandas": "2.3.1"
+  },
+  "sheetjet_source_hashes": {
+    "archive.py": "0fc72eb20a738ac7e428fe2d5448d2f20c240bdb00d4ef63aaddea85587cb82c",
+    "cli.py": "0b13bd42242b29b4bbaee7f6f1e6f81488f36fe507748e6c7303cc56270f63dc",
+    "core.py": "9bb3b701ef736264e7a79fd31af737bd494af9a8c9a43281d33d64fb847a5f18",
+    "errors.py": "e7d7fb3c0d14ce82f58804bafcadeae51c03c41c60ff27f762706ecfee1ce33f",
+    "index.py": "434cd2b702329006c82e6b6eb1b9915f2ab4e8bb230da2ec8f476608092153ab",
+    "package.py": "2afb99a637e83e27a4f6c5cc505f1e74120d436d22baaa93e8622a54a9b2910c",
+    "patch.py": "94a254ca7deff68e0b2b10c061aa1247992d2b412a0cf7da7d0baa5281e06551",
+    "projection.py": "2a31cd4a7f9ec8751374f3df610be0925706345e08154060827f3c45e0d66dc2",
+    "query.py": "a25758975c18b3746c55023cf4cd30bb55a6a7843a77a3728570a2a9a23a37e5",
+    "validation.py": "53b6038fd30c2e7e0f84c39173cbfb3f94c677e9281b71232ee6f8d4ce039781",
+    "workbook.py": "776be1a2bb990ad9befd0809fb3f523550e58b9e1748f31370adbd80aa3c63b7",
+    "__init__.py": "2faacb086d908ab6ea91effd77816c04113280e24962c54b7fce58d2e580d1d8",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+  },
+  "submission_hashes": {
+    "sheetjet_v04": {
+      "builder.py": "8b19b085bcb3d81dbe907afa21aa9dc6caa460da27a5fa737bcc5e348c2bf855",
+      "commands.json": "060c3e9b10be2c0e961575faf9cae49bf3571cb9782cd8ee3b3db64bedb74097"
+    },
+    "sheetjet_v05": {
+      "builder.py": "8b19b085bcb3d81dbe907afa21aa9dc6caa460da27a5fa737bcc5e348c2bf855",
+      "commands.json": "17cf332a2737e3532bd9d55ba5c88808b9816dd2d400924643774f37829fa4dd"
+    },
+    "anthropic": {
+      "builder.py": "72ca291cbf4839e673df39d30807544e7d198d07be44a645ab4339675e886969",
+      "commands.json": "49421ae617c1942183db2972d0c3b618b5989c53b43e1d0980afe1185ff15ed3"
+    }
+  },
+  "input_hashes": {
+    "periods.xlsx": "c1971496bcd3fb853fea3d8c476e8b496c53adca47e173f437ab6cbeb26da13e",
+    "wide.xlsx": "6dc6c0ff1a99b146d873a88c4f4f48a34fb5519ce0e53117af6180c349094625"
+  },
+  "rows_per_period": 25000,
+  "repeats": 5,
+  "shuffle_seed": 2026100902,
+  "agent_generations_per_skill": 1,
+  "actual_model_tokens_measured": false,
+  "methodology": "Independent same-model agents authored each submission from its assigned skill, then builders were frozen. Timings are fresh-process execution of frozen builders, not model reasoning time. Serial fixed-randomized trials; OS caches not flushed. Process-tree RSS sampled every 10ms may double-count shared pages and miss peaks. Independent openpyxl artifact judging is outside timed execution. Skill breadth and agent success-rate generalization are not established by one generation per skill. No universal skill ranking or token-saving claim.",
+  "medians": [
+    {
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.2704562998842448,
+      "seconds_min": 0.2227130001410842,
+      "seconds_max": 0.39627919998019934,
+      "peak_process_tree_rss_mib": 35.59375
+    },
+    {
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 1.254203800112009,
+      "seconds_min": 1.0736712999641895,
+      "seconds_max": 1.3963772999122739,
+      "peak_process_tree_rss_mib": 58.25
+    },
+    {
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 1.0832251000683755,
+      "seconds_min": 1.0475313998758793,
+      "seconds_max": 1.186768400017172,
+      "peak_process_tree_rss_mib": 106.83203125
+    },
+    {
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.5163982000667602,
+      "seconds_min": 0.4625352998264134,
+      "seconds_max": 0.7300225000362843,
+      "peak_process_tree_rss_mib": 40.265625
+    },
+    {
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.2847526997793466,
+      "seconds_min": 0.2128620999865234,
+      "seconds_max": 0.5301584999542683,
+      "peak_process_tree_rss_mib": 35.80859375
+    },
+    {
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 1.2397865999955684,
+      "seconds_min": 1.104538599960506,
+      "seconds_max": 1.298862500116229,
+      "peak_process_tree_rss_mib": 58.1015625
+    },
+    {
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.6334476999472827,
+      "seconds_min": 0.6244274000637233,
+      "seconds_max": 0.7287475999910384,
+      "peak_process_tree_rss_mib": 54.18359375
+    },
+    {
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.5585301001556218,
+      "seconds_min": 0.5006659000646323,
+      "seconds_max": 0.6486146999523044,
+      "peak_process_tree_rss_mib": 40.24609375
+    },
+    {
+      "skill": "anthropic",
+      "case": "edit",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.7261461999733001,
+      "seconds_min": 0.6591068999841809,
+      "seconds_max": 1.0060963998548687,
+      "peak_process_tree_rss_mib": 45.1484375
+    },
+    {
+      "skill": "anthropic",
+      "case": "aggregate",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 1.924544199835509,
+      "seconds_min": 1.8199527999386191,
+      "seconds_max": 2.229756399989128,
+      "peak_process_tree_rss_mib": 48.55078125
+    },
+    {
+      "skill": "anthropic",
+      "case": "wide",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.8832346999552101,
+      "seconds_min": 0.8078719000332057,
+      "seconds_max": 0.9897895001340657,
+      "peak_process_tree_rss_mib": 47.375
+    },
+    {
+      "skill": "anthropic",
+      "case": "create",
+      "passed": 5,
+      "trials": 5,
+      "seconds": 0.4652899999637157,
+      "seconds_min": 0.43292860011570156,
+      "seconds_max": 0.6505483000073582,
+      "peak_process_tree_rss_mib": 40.45703125
+    }
+  ],
+  "trials": [
+    {
+      "seconds": 1.067661999957636,
+      "peak_process_tree_rss_mib": 106.83203125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "trial": 1
+    },
+    {
+      "seconds": 0.7256710999645293,
+      "peak_process_tree_rss_mib": 46.39453125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 212,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "edit",
+      "trial": 4
+    },
+    {
+      "seconds": 0.4358615998644382,
+      "peak_process_tree_rss_mib": 40.28125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 291,
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "create",
+      "trial": 0
+    },
+    {
+      "seconds": 0.43292860011570156,
+      "peak_process_tree_rss_mib": 40.45703125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 291,
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "create",
+      "trial": 3
+    },
+    {
+      "seconds": 0.6591068999841809,
+      "peak_process_tree_rss_mib": 45.1484375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 212,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "edit",
+      "trial": 0
+    },
+    {
+      "seconds": 0.8816072999034077,
+      "peak_process_tree_rss_mib": 47.453125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 87,
+        "byte_identical_source_parts": 9,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "wide",
+      "trial": 2
+    },
+    {
+      "seconds": 1.104538599960506,
+      "peak_process_tree_rss_mib": 59.234375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "trial": 0
+    },
+    {
+      "seconds": 1.3057973999530077,
+      "peak_process_tree_rss_mib": 57.44921875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "trial": 1
+    },
+    {
+      "seconds": 1.0060963998548687,
+      "peak_process_tree_rss_mib": 45.1484375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 212,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "edit",
+      "trial": 3
+    },
+    {
+      "seconds": 0.9399570000823587,
+      "peak_process_tree_rss_mib": 47.4140625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 87,
+        "byte_identical_source_parts": 9,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "wide",
+      "trial": 4
+    },
+    {
+      "seconds": 0.6505483000073582,
+      "peak_process_tree_rss_mib": 40.43359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 291,
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "create",
+      "trial": 2
+    },
+    {
+      "seconds": 0.4625352998264134,
+      "peak_process_tree_rss_mib": 40.50390625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "trial": 2
+    },
+    {
+      "seconds": 0.5585301001556218,
+      "peak_process_tree_rss_mib": 40.22265625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "trial": 0
+    },
+    {
+      "seconds": 1.254203800112009,
+      "peak_process_tree_rss_mib": 58.25,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "trial": 3
+    },
+    {
+      "seconds": 1.2473810999654233,
+      "peak_process_tree_rss_mib": 57.3984375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "trial": 1
+    },
+    {
+      "seconds": 0.39627919998019934,
+      "peak_process_tree_rss_mib": 32.55078125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "trial": 4
+    },
+    {
+      "seconds": 0.5926254999358207,
+      "peak_process_tree_rss_mib": 40.15625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "trial": 1
+    },
+    {
+      "seconds": 0.6310839001089334,
+      "peak_process_tree_rss_mib": 54.1328125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "trial": 0
+    },
+    {
+      "seconds": 0.2903581999707967,
+      "peak_process_tree_rss_mib": 36.16015625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "trial": 0
+    },
+    {
+      "seconds": 1.8199527999386191,
+      "peak_process_tree_rss_mib": 48.46875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 119,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "aggregate",
+      "trial": 4
+    },
+    {
+      "seconds": 0.2128620999865234,
+      "peak_process_tree_rss_mib": 35.80859375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "trial": 1
+    },
+    {
+      "seconds": 1.1117744999937713,
+      "peak_process_tree_rss_mib": 106.80859375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "trial": 2
+    },
+    {
+      "seconds": 0.5301584999542683,
+      "peak_process_tree_rss_mib": 35.71875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "trial": 2
+    },
+    {
+      "seconds": 0.8078719000332057,
+      "peak_process_tree_rss_mib": 46.68359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 87,
+        "byte_identical_source_parts": 9,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "wide",
+      "trial": 3
+    },
+    {
+      "seconds": 0.7928738999180496,
+      "peak_process_tree_rss_mib": 45.12890625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 212,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "edit",
+      "trial": 2
+    },
+    {
+      "seconds": 0.5006659000646323,
+      "peak_process_tree_rss_mib": 40.265625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "trial": 3
+    },
+    {
+      "seconds": 2.229756399989128,
+      "peak_process_tree_rss_mib": 52.5546875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 119,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "aggregate",
+      "trial": 0
+    },
+    {
+      "seconds": 0.32870099996216595,
+      "peak_process_tree_rss_mib": 35.67578125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "trial": 3
+    },
+    {
+      "seconds": 0.2704562998842448,
+      "peak_process_tree_rss_mib": 35.9140625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "trial": 1
+    },
+    {
+      "seconds": 1.826729299966246,
+      "peak_process_tree_rss_mib": 48.55078125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 119,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "aggregate",
+      "trial": 2
+    },
+    {
+      "seconds": 0.6486146999523044,
+      "peak_process_tree_rss_mib": 40.24609375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "trial": 2
+    },
+    {
+      "seconds": 0.7300225000362843,
+      "peak_process_tree_rss_mib": 40.20703125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "trial": 1
+    },
+    {
+      "seconds": 1.186768400017172,
+      "peak_process_tree_rss_mib": 106.8359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "trial": 3
+    },
+    {
+      "seconds": 0.5701127001084387,
+      "peak_process_tree_rss_mib": 40.52734375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "trial": 0
+    },
+    {
+      "seconds": 1.9617363000288606,
+      "peak_process_tree_rss_mib": 48.47265625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 119,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "aggregate",
+      "trial": 3
+    },
+    {
+      "seconds": 1.2397865999955684,
+      "peak_process_tree_rss_mib": 59.64453125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "trial": 3
+    },
+    {
+      "seconds": 1.0475313998758793,
+      "peak_process_tree_rss_mib": 107.1640625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "trial": 0
+    },
+    {
+      "seconds": 0.7261461999733001,
+      "peak_process_tree_rss_mib": 45.58203125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 212,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "edit",
+      "trial": 1
+    },
+    {
+      "seconds": 1.1619587000459433,
+      "peak_process_tree_rss_mib": 58.1015625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "trial": 2
+    },
+    {
+      "seconds": 1.924544199835509,
+      "peak_process_tree_rss_mib": 52.54296875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 119,
+        "byte_identical_source_parts": 16,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "aggregate",
+      "trial": 1
+    },
+    {
+      "seconds": 0.5163982000667602,
+      "peak_process_tree_rss_mib": 40.21875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "trial": 3
+    },
+    {
+      "seconds": 0.9897895001340657,
+      "peak_process_tree_rss_mib": 47.0390625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 87,
+        "byte_identical_source_parts": 9,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "wide",
+      "trial": 0
+    },
+    {
+      "seconds": 0.4843401999678463,
+      "peak_process_tree_rss_mib": 40.5,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 291,
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "create",
+      "trial": 4
+    },
+    {
+      "seconds": 0.5439961000811309,
+      "peak_process_tree_rss_mib": 40.24609375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "create",
+      "trial": 4
+    },
+    {
+      "seconds": 0.6334476999472827,
+      "peak_process_tree_rss_mib": 54.18359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "trial": 1
+    },
+    {
+      "seconds": 0.46852550003677607,
+      "peak_process_tree_rss_mib": 40.265625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 432,
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "create",
+      "trial": 4
+    },
+    {
+      "seconds": 0.8832346999552101,
+      "peak_process_tree_rss_mib": 47.375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 87,
+        "byte_identical_source_parts": 9,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml"
+        ],
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "wide",
+      "trial": 1
+    },
+    {
+      "seconds": 0.6604496999643743,
+      "peak_process_tree_rss_mib": 54.18359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "trial": 3
+    },
+    {
+      "seconds": 1.298862500116229,
+      "peak_process_tree_rss_mib": 58.03125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "aggregate",
+      "trial": 4
+    },
+    {
+      "seconds": 0.25830959994345903,
+      "peak_process_tree_rss_mib": 32.546875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "trial": 2
+    },
+    {
+      "seconds": 0.25805589999072254,
+      "peak_process_tree_rss_mib": 36.3359375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "trial": 0
+    },
+    {
+      "seconds": 1.0832251000683755,
+      "peak_process_tree_rss_mib": 106.26171875,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "wide",
+      "trial": 4
+    },
+    {
+      "seconds": 0.6244274000637233,
+      "peak_process_tree_rss_mib": 54.36328125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "trial": 4
+    },
+    {
+      "seconds": 0.4652899999637157,
+      "peak_process_tree_rss_mib": 40.640625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "sheet_names": true,
+          "values_and_formulas": true,
+          "bold_headers": true,
+          "number_formats": true,
+          "freeze_panes": true,
+          "column_widths": true,
+          "column_chart": true,
+          "chart_series": true
+        },
+        "result_bytes": 291,
+        "passed": true
+      },
+      "skill": "anthropic",
+      "case": "create",
+      "trial": 1
+    },
+    {
+      "seconds": 0.2227130001410842,
+      "peak_process_tree_rss_mib": 35.59375,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "edit",
+      "trial": 3
+    },
+    {
+      "seconds": 0.7287475999910384,
+      "peak_process_tree_rss_mib": 54.1640625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true
+        },
+        "result_bytes": 89,
+        "byte_identical_source_parts": 8,
+        "source_part_count": 10,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet2.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "wide",
+      "trial": 2
+    },
+    {
+      "seconds": 0.2847526997793466,
+      "peak_process_tree_rss_mib": 36.1015625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 211,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/worksheets/sheet5.xml",
+          "xl/workbook.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v05",
+      "case": "edit",
+      "trial": 4
+    },
+    {
+      "seconds": 1.3963772999122739,
+      "peak_process_tree_rss_mib": 60.78125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "trial": 2
+    },
+    {
+      "seconds": 1.2050568000413477,
+      "peak_process_tree_rss_mib": 58.12890625,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "trial": 0
+    },
+    {
+      "seconds": 1.0736712999641895,
+      "peak_process_tree_rss_mib": 60.20703125,
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 67,
+      "verdict": {
+        "checks": {
+          "bounded_json": true,
+          "unchanged_values_formulas_structure_styles": true,
+          "requested_values": true,
+          "existing_formula_cache_preserved": true,
+          "custom_xml_payload": true,
+          "custom_xml_relationship": true
+        },
+        "result_bytes": 236,
+        "byte_identical_source_parts": 15,
+        "source_part_count": 17,
+        "changed_or_missing_parts": [
+          "xl/workbook.xml",
+          "xl/worksheets/sheet7.xml"
+        ],
+        "passed": true
+      },
+      "skill": "sheetjet_v04",
+      "case": "aggregate",
+      "trial": 4
+    }
+  ]
+}

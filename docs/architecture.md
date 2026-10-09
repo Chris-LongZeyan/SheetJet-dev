@@ -79,6 +79,13 @@ and is replaced when staging changes. A single SELECT and response budgets remai
 mandatory. Loaded projections are local, trusted data; this is not a general hostile
 SQL execution service. See DuckDB's [file access controls](https://duckdb.org/docs/stable/configuration/overview).
 
+Positional text parameters use native SQL prepared statements, avoiding optional
+dataframe imports in Python parameter conversion. One prepared query is retained
+per connection and rebound for repeated filters. Query changes replace it;
+connection replacement and execution failures invalidate it. Other parameter types,
+named mappings, and text containing NUL use DuckDB's original Python binding path.
+User SQL is not rewritten to substitute parameter values.
+
 Parquet views let DuckDB push column selection and predicates into the scan without
 copying the complete projection into another database. The explicit
 `query_engine.materialize(name)` method makes a session-local table when repeated
