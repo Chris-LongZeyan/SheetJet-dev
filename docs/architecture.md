@@ -32,6 +32,7 @@ No embeddings, network service or LLM API is required for execution.
 | Analytics | Expat scalar events, typed CSV-to-Parquet conversion, lazy DuckDB views | Exact numeric lexemes; no row trees or second data copy on cache load |
 | Repeated scans | Explicit session materialization and reusable read-only connection | Pay for a local table once when repeated scans justify it |
 | Multi-sheet queries | Header-name projection and provenance, union of selected ranges | Unrelated sheets excluded; per-sheet invalidation |
+| Reconciliation | Typed projections, global key checks, null-safe full join, disk-backed differences | Two workbooks; bounded samples and streamed complete JSONL; no edit application |
 | Edits | Expat byte offsets, XML span replacement, compressed ZIP record copying | Recompress only changed parts; preserve opaque compressed records |
 | Validation | Changed-sheet parse, expected cells, sheet/name/table identities, ZIP CRC/size | No whole-workbook cell-object reload |
 | Disclosure | Compact JSON, hard budgets, separate full audit | No silent overflow truncation |
@@ -65,6 +66,13 @@ against local tampering. It never proves freshness of Excel's formula caches.
 `load_sheets` takes explicit ranges and a common schema, stages only named columns,
 aligns reordered headers, and adds source-sheet provenance. Each sheet is reusable
 independently. Inputs with different units or meanings still require semantic review.
+
+`reconcile` projects keys and selected comparison columns from each workbook, verifies
+global key uniqueness and non-nullness, and matches records across selected sheets.
+It materializes only added, removed, or changed records. A complete JSONL export is
+written to a sibling temporary file and published after summary-budget and source
+checks. This compares typed values, not cell placement or workbook structure. See
+the [reconciliation contract](reconciliation.md) for scope and publication details.
 
 The scalar parser consumes 128 KiB XML chunks and queues only the rows produced by
 that chunk. It recognizes namespace-qualified cell paths, omits phonetic annotations,

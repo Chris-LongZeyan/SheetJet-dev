@@ -1,0 +1,808 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.7",
+  "versions": {
+    "sheetjet": "0.6.0",
+    "duckdb": "1.5.5",
+    "openpyxl": "3.1.5",
+    "psutil": "7.2.2"
+  },
+  "input_hashes": {
+    "before.xlsx": "a2c15eff49a29e12f393f0555c88a38491df14994399e66bd69710aecb219fd8",
+    "after.xlsx": "4826eab14db6cc53148f32c4757256cf7700cf7d8fbd5a77a4ced9e8c8e7dfad"
+  },
+  "source_hashes": {
+    "src\\sheetjet\\reconcile.py": "b703bae1c5bd5abf843de7d798a34b3bf0913a533a9701bac569332c47a22149",
+    "benchmarks\\reconciliation.py": "0246ffd12b1ff535d3a662b2087d7bcc9d395989593abaa3e44c403b33842a7c"
+  },
+  "rows_before": 500000,
+  "expected": {
+    "added": 5000,
+    "removed": 5154,
+    "changed": 4899,
+    "unchanged": 489947
+  },
+  "cache_preparation": {
+    "summary": {
+      "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+      "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+      "before_ranges": {
+        "Partition1": "A1:C125001",
+        "Partition2": "A1:C125001",
+        "Partition3": "A1:C125001",
+        "Partition4": "A1:C125001"
+      },
+      "after_ranges": {
+        "Partition1": "A1:C124963",
+        "Partition2": "A1:C124963",
+        "Partition3": "A1:C124962",
+        "Partition4": "A1:C124962"
+      },
+      "schema": {
+        "ID": "BIGINT",
+        "Region": "VARCHAR",
+        "Amount": "DECIMAL(18,2)"
+      },
+      "keys": [
+        "ID"
+      ],
+      "compare_columns": [
+        "Region",
+        "Amount"
+      ],
+      "rows": {
+        "before": 500000,
+        "after": 499846
+      },
+      "counts": {
+        "added": 5000,
+        "removed": 5154,
+        "changed": 4899,
+        "unchanged": 489947
+      },
+      "changed_columns": {
+        "Region": 0,
+        "Amount": 4899
+      },
+      "sample": [
+        {
+          "kind": "removed",
+          "key": {
+            "ID": 97
+          },
+          "before": {
+            "sheet": "Partition2",
+            "values": {
+              "Region": "EMEA",
+              "Amount": "35.89"
+            }
+          },
+          "after": null,
+          "changed_columns": []
+        },
+        {
+          "kind": "changed",
+          "key": {
+            "ID": 101
+          },
+          "before": {
+            "sheet": "Partition2",
+            "values": {
+              "Region": "EMEA",
+              "Amount": "37.37"
+            }
+          },
+          "after": {
+            "sheet": "Partition3",
+            "values": {
+              "Region": "EMEA",
+              "Amount": "37.42"
+            }
+          },
+          "changed_columns": [
+            "Amount"
+          ]
+        },
+        {
+          "kind": "removed",
+          "key": {
+            "ID": 194
+          },
+          "before": {
+            "sheet": "Partition3",
+            "values": {
+              "Region": "Americas",
+              "Amount": "71.78"
+            }
+          },
+          "after": null,
+          "changed_columns": []
+        }
+      ],
+      "sample_truncated": true,
+      "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cache-preparation.jsonl",
+      "formula_policy": "formula inputs rejected",
+      "cache_hits": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    "peak_rss_mib": 114.01171875,
+    "seconds": 19.61094169993885,
+    "phase": "cache-preparation",
+    "verified_changes": 15053
+  },
+  "trials": [
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cold-0.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "peak_rss_mib": 113.98046875,
+      "seconds": 26.64621700020507,
+      "phase": "cold-0",
+      "verified_changes": 15053
+    },
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cached-0.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 4,
+          "after": 4
+        }
+      },
+      "peak_rss_mib": 108.16015625,
+      "seconds": 1.3081831999588758,
+      "phase": "cached-0",
+      "verified_changes": 15053
+    },
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cached-1.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 4,
+          "after": 4
+        }
+      },
+      "peak_rss_mib": 108.4375,
+      "seconds": 1.3458097002003342,
+      "phase": "cached-1",
+      "verified_changes": 15053
+    },
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cold-1.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "peak_rss_mib": 114.27734375,
+      "seconds": 20.79182259994559,
+      "phase": "cold-1",
+      "verified_changes": 15053
+    },
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cold-2.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "peak_rss_mib": 112.5625,
+      "seconds": 19.80802410002798,
+      "phase": "cold-2",
+      "verified_changes": 15053
+    },
+    {
+      "summary": {
+        "before": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\before.xlsx",
+        "after": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\inputs\\after.xlsx",
+        "before_ranges": {
+          "Partition1": "A1:C125001",
+          "Partition2": "A1:C125001",
+          "Partition3": "A1:C125001",
+          "Partition4": "A1:C125001"
+        },
+        "after_ranges": {
+          "Partition1": "A1:C124963",
+          "Partition2": "A1:C124963",
+          "Partition3": "A1:C124962",
+          "Partition4": "A1:C124962"
+        },
+        "schema": {
+          "ID": "BIGINT",
+          "Region": "VARCHAR",
+          "Amount": "DECIMAL(18,2)"
+        },
+        "keys": [
+          "ID"
+        ],
+        "compare_columns": [
+          "Region",
+          "Amount"
+        ],
+        "rows": {
+          "before": 500000,
+          "after": 499846
+        },
+        "counts": {
+          "added": 5000,
+          "removed": 5154,
+          "changed": 4899,
+          "unchanged": 489947
+        },
+        "changed_columns": {
+          "Region": 0,
+          "Amount": 4899
+        },
+        "sample": [
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 97
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "35.89"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          },
+          {
+            "kind": "changed",
+            "key": {
+              "ID": 101
+            },
+            "before": {
+              "sheet": "Partition2",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.37"
+              }
+            },
+            "after": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "EMEA",
+                "Amount": "37.42"
+              }
+            },
+            "changed_columns": [
+              "Amount"
+            ]
+          },
+          {
+            "kind": "removed",
+            "key": {
+              "ID": 194
+            },
+            "before": {
+              "sheet": "Partition3",
+              "values": {
+                "Region": "Americas",
+                "Amount": "71.78"
+              }
+            },
+            "after": null,
+            "changed_columns": []
+          }
+        ],
+        "sample_truncated": true,
+        "output": "D:\\GitHub_Repositories\\SheetJet-dev\\benchmark-output\\reconciliation-v0.6\\cached-2.jsonl",
+        "formula_policy": "formula inputs rejected",
+        "cache_hits": {
+          "before": 4,
+          "after": 4
+        }
+      },
+      "peak_rss_mib": 108.33203125,
+      "seconds": 1.2797620999626815,
+      "phase": "cached-2",
+      "verified_changes": 15053
+    }
+  ],
+  "medians": {
+    "cold": {
+      "seconds": 20.79182259994559,
+      "peak_rss_mib": 113.98046875
+    },
+    "cached": {
+      "seconds": 1.3081831999588758,
+      "peak_rss_mib": 108.33203125
+    }
+  },
+  "scope": "Fresh processes; fixture generation and independent export verification excluded. Timings include imports, reconciliation, and complete JSONL export. RSS sampled every 10ms inside worker before SheetJet import. OS caches not flushed. Warm preparation reported separately. No peer ranking."
+}

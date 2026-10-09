@@ -6,205 +6,168 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/downloads/)
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-SheetJet is a Python engine, CLI, and reusable agent skill for large Excel workbooks.
-Search locally, query selected columns with SQL, and return a few useful answers.
-Edit exact cells without round-tripping the rest of the workbook through a cell-object
-library. No LLM API key, embeddings service, or Excel installation is required.
+SheetJet is a Python library, CLI, and agent skill for working locally with large
+Excel workbooks. Query selected columns, reconcile records across snapshots, and
+patch exact cells while preserving untouched workbook parts. No LLM API key,
+embeddings service, or Excel installation is required.
 
 ```text
 1,000,000 transactions → local SQL → 4 regional totals
-1 assumption edit     → XML patch → untouched workbook parts preserved
+Two workbook snapshots → business-key matching → complete change file
+One assumption edit    → XML patch → untouched workbook parts preserved
 ```
 
-**New in v0.5:** the previously losing wide-sheet task now beats the frozen Anthropic
-skill submission: **0.633 s versus 0.883 s**. Native prepared text queries avoid
-optional dataframe imports and reuse one query plan per session. Wide-sheet time
-fell **41.5%**, and peak memory fell **49.3%**, against a fresh v0.4 baseline.
+**New in v0.6:** cross-workbook reconciliation across selected sheets, with composite
+keys, exact decimal comparison, duplicate-key checks, reusable projections, and
+atomic JSONL exports. [Usage and semantics](docs/reconciliation.md) ·
+[Release notes](CHANGELOG.md) · [Roadmap and release gates](docs/roadmap.md)
 
-In five fresh-process trials per task, v0.5 beat the Anthropic submission on all three
-existing-workbook workflows: **1.39× on wide projection, 2.55× on a single-cell edit,
-and 1.55× on multi-sheet aggregation with writeback**. All 60 final executions passed
-independent saved-file checks. Anthropic retains lower query memory and a faster
-new-workbook creation median. [Results, frozen builders, and reproduction](docs/performance-v0.5.md).
-The [earlier three-skill comparison](docs/skill-workflows-v0.4.md) includes the installed
-OpenAI Spreadsheets skill; it has not been rerun for v0.5.
-
-In the earlier four-sheet, 100k-row library comparison, changing one assumption took a median
-**0.105 s and 38.5 MiB peak RSS**, versus **7.247 s and 258.8 MiB** for openpyxl's
-load/save path. Both use three synthetic trials and edit a small assumptions sheet.
-At one million rows, cache reopening plus aggregation fell from **0.311 s to 0.124 s**
-against a fresh v0.2 rerun. Native readers still win cold aggregation.
-[Full results, raw trials and limits](docs/performance-v0.3.md).
-
-## The useful difference
-
-**Context limits are enforced in code.** Responses default to at most 2,000 cells,
-100 query rows, and 12,000 JSON characters. An oversized answer fails with guidance
-to narrow or aggregate it. It is never silently truncated.
-
-**Edits have a preservation contract.** SheetJet changes authorized XML spans and
-copies untouched compressed ZIP records exactly. That includes opaque chart, pivot,
-VBA and extension parts. A saved output comes with a machine-readable change log,
-changed-cell checks and package structure checks. Only changed parts are recompressed.
-
-**Unchanged sheets stay reusable.** A per-sheet Parquet cache retains only selected
-columns, keyed by their source, range, schema and formula policy. Change one sheet,
-and other sheets' projections remain reusable—even in a renamed output workbook.
-Numeric XML values reach DECIMAL conversion without passing through a Python float.
-
-**Performance claims come with a script.** Compare cold metadata/lookup/aggregation,
-warm SQL, memory use and edits against openpyxl, pandas with two reader engines,
-Calamine, and Polars/Calamine. A Polars-Parquet baseline also tests cached queries.
-See [current peer measurements](docs/performance-v0.3.md), the
-[v0.2 peer comparison](docs/peer-benchmarks.md), and the
-[original v0.1 measurements](docs/benchmarks.md).
-Ordinary deterministic analysis also avoids an LLM context dump; SheetJet packages
-that approach with enforceable budgets, discovery tools and audited edits.
-The [skill workflow benchmark](docs/skill-workflows-v0.4.md) additionally evaluates
-independent agent-authored solutions, including preservation-aware peer fallbacks.
-
-## Try it in a minute
+## Get started
 
 Python 3.11 or newer:
 
 ```console
 git clone https://github.com/Chris-LongZeyan/SheetJet-dev.git
 cd SheetJet-dev
-python -m pip install -e ".[test]"
+python -m pip install -e .
 python -m examples.demo --rows 10000
+python -m examples.reconcile --rows 10000
 ```
 
-The offline demo creates a transaction workbook, finds an assumption, computes
-regional totals, changes one assumption and verifies the saved output. Generated
-files stay under `benchmark-output/demo/`. Use `--rows 1000000` for the large version.
+These offline examples generate synthetic workbooks, execute the workflow, and check
+the result. Outputs stay under `benchmark-output/`. Reconciliation requires a fresh
+output directory; use `--output benchmark-output/another-run` when repeating it.
+Run `python -m examples.multisheet` for header alignment and cache reuse after an edit.
 
-Run `python -m examples.multisheet` to see reordered headers align across sheets,
-exact decimal totals, optional materialization, and both period caches reused after
-an assumption edit. [Read the runnable example](examples/multisheet.py).
+## Analyze selected sheets
 
 ```python
 from sheetjet import Workbook
 
-with Workbook("book.xlsx") as book:
-    print(book.inspect_workbook())
-    print(book.find_text("China growth", sheets=["Assumptions"]))
-
-    book.query_engine.load(
-        "Sales",
-        columns=["Region", "Revenue"],
-        schema={"Region": "VARCHAR", "Revenue": "DECIMAL(18,2)"},
-    )
-    answer = book.query_engine.query('''
-        SELECT "Region", SUM("Revenue") AS revenue
-        FROM Sales GROUP BY 1 ORDER BY revenue DESC LIMIT 10
-    ''')
-    print(book.serialize(answer))
-
-    report = book.patch_cells([
-        {"operation": "SET_VALUE", "sheet": "Assumptions", "cell": "B1",
-         "expected": 0.08, "value": 0.12}
-    ], output="revised.xlsx")
-    print(report)
-```
-
-The example expects a table named `Sales` with those columns. For an unnamed table,
-pass `sheet=` and `ref=` to `query_engine.load`. Its first row supplies the headers.
-
-For a series of queries that repeatedly scan the same data, call
-`book.query_engine.materialize("Sales")` once after loading. The copy is local to
-that session and consumes temporary storage; cache loading stays lazy by default.
-Use the same open `Workbook` for related queries to reuse its restricted connection.
-
-## CLI and agent skill
-
-For multiple sheets:
-
-```python
 with Workbook("regional.xlsx", cache_dir=".sheetjet-cache") as book:
     book.query_engine.load_sheets(
         "Sales",
         {"January": "A1:H250001", "February": "A1:H250001"},
         {"Region": "VARCHAR", "Revenue": "DECIMAL(18,2)"},
     )
-    print(book.query_engine.query('''
-        SELECT _sheet, "Region", SUM("Revenue") AS revenue
-        FROM Sales GROUP BY 1, 2 ORDER BY 1, 2
-    '''))
+    result = book.query_engine.query('''
+        SELECT "Region", SUM("Revenue") AS revenue
+        FROM Sales GROUP BY 1 ORDER BY 1
+    ''')
+    print(book.serialize(result))
 ```
 
-Column order may differ; headers must identify the same concepts and units. Ranges
-are explicit because worksheet dimensions can be stale. Persistent caches are local
-data files; opt out with `persistent_cache=False` or `--no-persistent-cache`.
+The first row in each range supplies headers; column order may differ. Select sheets
+with compatible units and meanings. Explicit ranges avoid stale worksheet dimensions.
+Use one open `Workbook` for related queries. Optional `materialize("Sales")` pays for
+one session-local copy when many repeated scans justify it.
+
+## Reconcile workbook snapshots
+
+```python
+from sheetjet import reconcile
+
+summary = reconcile(
+    "before.xlsx", "after.xlsx",
+    before_ranges={"North": "A1:C10001", "South": "A1:C10001"},
+    after_ranges={"North": "A1:C10021", "South": "A1:C9991"},
+    schema={"ID": "BIGINT", "Region": "VARCHAR", "Amount": "DECIMAL(18,2)"},
+    keys=["ID"],
+    sample_limit=5,
+    output="changes.jsonl",
+    cache_dir=".sheetjet-cache",
+)
+print(summary["counts"])
+```
+
+Records match by key across all selected sheets. Moving or reordering an unchanged
+record does not create a false change. The summary reports added, removed, changed,
+and unchanged counts; the optional JSONL contains **every change**, sorted by key.
+Duplicate or null keys fail before export. [Full Python and CLI reference](docs/reconciliation.md).
+
+## Inspect and edit exact cells
 
 ```console
 sheetjet inspect book.xlsx
 sheetjet find book.xlsx "China growth" --sheet Assumptions
 sheetjet read book.xlsx Assumptions A1:C8
-sheetjet patterns book.xlsx Model --limit 10
 sheetjet patch book.xlsx patch.json revised.xlsx
-sheetjet --metrics inspect revised.xlsx
 ```
 
-Copy [`skills/sheetjet/`](skills/sheetjet/) into your agent's skill directory after
-installing the Python package. For Codex, the usual location is
-`~/.codex/skills/sheetjet/`. The [skill instructions](skills/sheetjet/SKILL.md) guide
-progressive discovery, ambiguity resolution, query planning, and bounded disclosure.
-The Python engine and CLI can also be used without an agent.
+An example `patch.json`:
 
-## What works today
+```json
+[{"operation":"SET_VALUE","sheet":"Assumptions","cell":"B1","expected":0.08,"value":0.12}]
+```
 
-| Capability | Current behavior |
+The patch changes authorized XML spans, copies untouched compressed ZIP records,
+and verifies saved cells and package structure. A full audit accompanies the output.
+See the [operation reference](skills/sheetjet/references/operations.md).
+
+## Design strengths
+
+| Capability | Contract |
 |---|---|
-| XLSX / XLSM | Streaming inspection and targeted editing |
-| Workbook map | Sheet states, tables, names, panes, calculation settings and feature counts |
-| Local search | Persistent SQLite FTS5 index; scoped label search or explicit full-text scan |
-| Large-table analysis | DuckDB filters, groups, joins, windows, profiles and exact decimal schemas |
-| Multiple sheets | Explicit selected ranges, header alignment and source-sheet provenance |
-| Persistent projections | Typed Parquet, per-sheet invalidation, corruption recovery and opt-out |
-| Formula inspection | Formula locations, repeated vertical patterns and lexical precedents |
-| Cell edits | Set values; set/copy formulas and existing styles; write rectangular value ranges |
-| Preservation | Untouched compressed ZIP records and worksheet XML outside edited spans retained |
-| Validation | Expected-value preconditions, saved-cell checks, structure checks and full audit |
-| Tests and stress data | Ten fixture families, an offline demo and process-isolated benchmarks |
+| Bounded answers | Defaults: 2,000 cells, 100 query rows, 12,000 JSON characters; overflow raises an error |
+| Selected-column analytics | Streaming projection into typed Parquet; SQL filters, groups, joins and windows |
+| Exact decimals | Numeric XML text reaches DECIMAL conversion without a Python float round trip |
+| Multi-sheet reconciliation | Explicit ranges, shared schema, global key checks, null-safe comparison, full change export |
+| Reusable local data | Per-sheet projections invalidate by source, range, schema and formula policy |
+| Precise edits | Value/formula/existing-style changes and rectangular value writes with preconditions |
+| Preservation | Untouched compressed parts and worksheet XML outside edited spans retained |
+| Discovery | Package metadata, local label search, formula patterns and lexical precedents |
 
-**Know the boundary:** SheetJet does not calculate Excel formulas, refresh pivots,
-execute macros, or verify native Excel rendering. Content edits request recalculation;
-dependent stored caches may remain stale until Excel recalculates. SQL refuses
-formula inputs unless cached values are explicitly accepted, and missing formula
-caches still fail.
+Caches contain workbook data. Choose an appropriate local cache directory or pass
+`persistent_cache=False` / `--no-persistent-cache` for query projections. Search
+indexes have separate persistence. Read the [architecture and fidelity contract](docs/architecture.md).
 
-Dependency-sensitive structural changes—row/column shifts, sheet renames, table
-creation/resizing and chart creation—are explicitly unsupported in this release.
-Shared/array formula groups, table headers/totals and merged non-anchor cells are
-protected. XLS/XLSB, encrypted workbooks and strict OOXML are also unsupported.
-Read the [full architecture and fidelity contract](docs/architecture.md).
+## Agent skill
 
-## Reproduce the evidence
+After installing the package, copy [`skills/sheetjet/`](skills/sheetjet/) to your
+agent's skill directory (for Codex, usually `~/.codex/skills/sheetjet/`). The
+[skill instructions](skills/sheetjet/SKILL.md) cover discovery, query planning,
+reconciliation, ambiguity resolution, bounded disclosure, and audited edits.
+The library and CLI also work without an agent.
+
+## Evidence and limits
+
+The [v0.5 frozen skill comparison](docs/performance-v0.5.md) measured faster execution
+than the Anthropic submission on three existing-workbook tasks: **1.39× wide
+projection, 2.55× single-cell editing, and 1.55× multi-sheet aggregation/writeback**.
+All 60 final executions passed independent output checks. Anthropic retained lower
+query memory and faster new-workbook creation. Those measurements concern the frozen
+submissions and fixtures; they are not a universal skill ranking or a v0.6 rerun.
+
+- [v0.6 reconciliation measurements](docs/performance-v0.6.md): fresh-process cold and cached runs, with complete export verification.
+- [v0.4 three-skill evaluation](docs/skill-workflows-v0.4.md): includes the installed OpenAI Spreadsheets skill.
+- [v0.3 library benchmarks](docs/performance-v0.3.md): native readers win cold aggregation; Polars-Parquet wins the measured cached aggregation.
+- [Original measurements](docs/benchmarks.md) and [v0.2 comparison](docs/peer-benchmarks.md).
+
+SheetJet does **not** calculate formulas, refresh pivots, execute macros, or verify
+native Excel rendering. Content edits request recalculation; stored formula caches
+may remain stale. Query and reconciliation inputs reject formulas unless cached
+values are explicitly accepted, and missing caches still fail.
+
+Structural changes (row/column shifts, sheet renames, table creation/resizing, chart
+creation) are unsupported. Shared/array formula groups, table headers/totals, and
+merged non-anchor cells are protected. XLS/XLSB, encrypted workbooks, and strict
+OOXML are unsupported. Reconciliation compares selected typed values, not styles,
+formula text, or whole-workbook fidelity.
+
+## Development
 
 ```console
+python -m pip install -e ".[test]"
 python -m pytest -q
-python -m pip install -e ".[benchmark]"
-python -m benchmarks.peers --rows 25000 --sheets 4 --repeats 3
-python -m benchmarks.peers --rows 250000 --sheets 4 --repeats 1 --shared-strings --output benchmark-output/million-peers/results.json
-python -m benchmarks.fixtures benchmark-output/suite --rows 10000
-python -m benchmarks.run --rows 100000 --repeats 3 --output benchmark-output/100k/results.json
-python -m benchmarks.run --rows 1000000 --repeats 3 --output benchmark-output/million/results.json
+python -m ruff check src tests benchmarks examples
+python -m ruff format --check src tests benchmarks examples
+python -m benchmarks.reconciliation --rows 500000 --repeats 3
 ```
 
-Large runs take several minutes and need temporary disk space. Benchmarks verify
-aggregation answers against independent fixture arithmetic. Results include raw
-trials, versions, file hashes, peak RSS and clearly labeled context-token estimates.
-The VBA fixture is an opaque-byte canary, **not a functioning macro project**; real
-Excel-authored fixtures and native verification are welcome.
-
-## Help improve it
-
-Useful contributions are small workbooks that expose a bug, fidelity regressions,
-and reproducible performance improvements. See [CONTRIBUTING.md](CONTRIBUTING.md).
-The next milestones are native Excel fidelity tests, table-aware structural edits,
-and native parsing with the same value/error/formula semantics. SheetJet does not
-claim to beat every library in every workload: specialized native readers currently
-win cold tabular reads, and Polars-Parquet wins the measured cached aggregation.
+Large benchmarks require temporary disk space. Fixture generation and verification
+are documented separately from timed execution. For library peer comparisons, install
+`.[benchmark]` and run `python -m benchmarks.peers`. See [CONTRIBUTING.md](CONTRIBUTING.md)
+for correctness and evidence requirements.
 
 MIT licensed. The original design brief is preserved in
-[`Excel-skill-instruction.md`](Excel-skill-instruction.md).
+[Excel-skill-instruction.md](Excel-skill-instruction.md).

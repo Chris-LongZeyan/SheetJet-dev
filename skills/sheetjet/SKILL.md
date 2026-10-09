@@ -1,6 +1,6 @@
 ---
 name: sheetjet
-description: Query large XLSX/XLSM workbooks with bounded model context and apply audited cell patches while preserving untouched workbook parts. Use for local Excel discovery, table analytics, formula inspection, and precise value/formula/style edits. Does not control a live Excel session or calculate Excel formulas.
+description: Query large XLSX/XLSM workbooks with bounded model context, reconcile records across workbook snapshots by business key, and apply audited cell patches while preserving untouched workbook parts. Use for local Excel discovery, multi-sheet analytics, snapshot comparison, formula inspection, and precise value/formula/style edits. Does not control a live Excel session or calculate Excel formulas.
 ---
 
 # SheetJet
@@ -31,6 +31,21 @@ into an agent's skills directory after the Python package is installed.
    merely because the headers match.
 5. Return coordinates, definitions, compact aggregates and limitations. Reference
    evidence locations and distinguish stored formula caches from recalculated values.
+
+## Reconcile snapshots
+
+For two workbook snapshots, use `sheetjet.reconcile` or `sheetjet reconcile` with
+explicit per-input sheet ranges, a shared schema, and unique business keys. This
+handles row/header reordering and records moving between sheets. Confirm the key's
+business meaning and units; duplicate or null keys are errors, not a reason to drop
+records. Use composite keys when necessary. See the
+[reconciliation reference](references/reconciliation.md) for the spec and output contract.
+
+Return counts and a small sample; save all differences with `output=` when needed.
+The complete JSONL is separate from the sample, whose `sample_truncated` flag must
+be respected. DECIMAL values serialize as strings. State selected columns, omitted
+sheets, formula policy, and that styles/formula text are outside this comparison.
+Reconciliation produces no cell edit plan and never applies its differences.
 
 ## Context contract
 

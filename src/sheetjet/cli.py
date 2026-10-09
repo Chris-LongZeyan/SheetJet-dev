@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 from .core import Budget, compact
@@ -72,9 +73,53 @@ def main(argv=None):
     p.add_argument("patch_file")
     p.add_argument("output")
     p.add_argument("--overwrite", action="store_true")
+    p = sub.add_parser(
+        "reconcile", help="Compare records across two workbooks by unique business keys"
+    )
+    p.add_argument("before")
+    p.add_argument("after")
+    p.add_argument(
+        "--spec",
+        required=True,
+        help="JSON with before_ranges, after_ranges, schema, keys, and optional compare_columns",
+    )
+    p.add_argument("--sample-limit", type=int, default=20)
+    p.add_argument("--output", help="Optional complete JSONL change file")
+    p.add_argument("--overwrite", action="store_true")
+    p.add_argument("--cached-formulas", action="store_true")
+    p.add_argument("--no-persistent-cache", action="store_true")
     args = parser.parse_args(argv)
     try:
         budget = Budget(args.max_cells, args.max_rows, args.max_chars)
+        if args.command == "reconcile":
+            from .reconcile import reconcile
+
+            spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+            start = time.perf_counter()
+            result = reconcile(
+                args.before,
+                args.after,
+                **spec,
+                sample_limit=args.sample_limit,
+                output=args.output,
+                overwrite=args.overwrite,
+                cache_dir=args.cache_dir,
+                budget=budget,
+                allow_cached_formulas=args.cached_formulas,
+                persistent_cache=not args.no_persistent_cache,
+            )
+            print(compact(result, budget))
+            if args.metrics:
+                print(
+                    json.dumps(
+                        {
+                            "seconds": {"reconciliation": time.perf_counter() - start},
+                            "cache_hits": result["cache_hits"],
+                        }
+                    ),
+                    file=sys.stderr,
+                )
+            return 0
         with Workbook(args.file, args.cache_dir, budget) as book:
             cmd = args.command
             if cmd == "inspect":

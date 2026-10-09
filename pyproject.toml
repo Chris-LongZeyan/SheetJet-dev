@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sheetjet"
-version = "0.5.0"
-description = "Range-first Excel inspection, search, analytics and preservation-focused patches"
+version = "0.6.0"
+description = "Local Excel analytics, key-based reconciliation and preservation-focused patches"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
